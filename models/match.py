@@ -4,3 +4,4 @@ class Match:
     def __init__(self, player, result):
         self.player = player
         self.result = result
+        

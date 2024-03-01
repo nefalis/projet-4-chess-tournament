@@ -8,4 +8,13 @@ class Player:
         self.score = score
         self.rank = rank
 
+#     def view_player(self):
+#         print(f"Player {self.first_name} {self.last_name} Date naissance:{self.birthday} Score:{self.score} Rang:{self.rank}")
+        
     
+
+# player1 = Player("Pouet Pouet", "Camembert", "16/06/2000", 51, 3)
+# player1.view_player()
+# print()
+# print(player1)
+# print()
