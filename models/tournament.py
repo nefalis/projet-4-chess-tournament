@@ -9,4 +9,7 @@ class Tournament:
         self.number_round = number_round
         self.number_player = number_player
         self.description_tournament = description_tournament
+        self.players = []
         
+    def add_player(self, player):
+        self.players.append(player)

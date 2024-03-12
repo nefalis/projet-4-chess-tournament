@@ -9,7 +9,7 @@ class PlayerView:
         return first_name_player
     
     def last_name_player(self):
-        last_name_player = input("Nom de famille du joeur: ")
+        last_name_player = input("Nom de famille du joueur: ")
         return last_name_player
     
     def birthday_player(self):
@@ -19,7 +19,3 @@ class PlayerView:
     def score_player(self):
         score_player = input("Score du joueur: ")
         return score_player
-
-    def rank_player(self):
-        rank_player = input("Rang du joueur: ")
-        return rank_player
