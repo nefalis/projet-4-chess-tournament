@@ -59,11 +59,15 @@ class PlayerController:
                 print("je rajoute 1 au vainqueur")
 
     """ fonction pour choisir des joueurs aléatoire"""
-    def choose_random_players(self, list_players):
-        if list_players > len(self.players):
-            print("Il n'y a pas assez de joueurs disponible.")
-            return []
-        random_players = random.sample(self.players, list_players)
+    def choose_random_players(self, list_players, test):
+        print(len(self.players))
+        print("ligne64 playercontrol")
+        print(list_players)
+        print(type(len(self.players)))
+        # if list_players > len(self.players qui devient test et get au final):
+        #     print("Il n'y a pas assez de joueurs disponible.")
+        #     return []
+        random_players = random.sample(test, list_players)
         print("pik nik douille c'est toi l'andouille")
         return random_players
 

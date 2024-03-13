@@ -1,11 +1,15 @@
 from controller.playercontroller import PlayerController
 from controller.matchcontroller import MatchController
 from controller.tournamentcontroller import TournamentController
+from datetime import datetime
 
 # Création des instances
 player_controller = PlayerController()
 tournament_controller = TournamentController()
 match_controller = MatchController()
+
+# Obtenez l'heure actuelle
+end_time = datetime.now()
 
 # Créer des joueurs
 player1 = player_controller.create_player("Pouet pouet", "Camembert", "16/06/2000", 0)
@@ -32,6 +36,9 @@ players_to_add = [player1, player2, player3, player4, player5, player6, player7,
 # Appelez la méthode add_player_tournament
 tournament_controller.add_player_tournament(players_to_add)
 
+# debut round 
+tournament_controller.start_round()
+
 # Créer un match entre les joueurs
 match = match_controller.add_match(player1, player2, "white", "black")
 
@@ -57,6 +64,9 @@ match_controller.matches.append(match)
 # Mettre à jour les score des joueurs 
 player_controller.update_score(match_controller)
 
+# Fin du tournois
+tournament_controller.end_tournament(end_time)
+
 # Afficher les joueurs triés par score
 sorted_players = sorted(player_controller.players, key=lambda x: x.score, reverse=True)
 for player in sorted_players:
@@ -67,8 +77,6 @@ player_controller.update_player_json("playersDB.json")
 
 # Enregistrer le tournois dans un fichier JSON
 tournament_controller.update_tournament_json("tournamentDB.json")
-
-
 
 
 # from controller.playercontroller import PlayerController
