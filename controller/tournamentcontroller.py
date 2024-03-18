@@ -22,10 +22,9 @@ class TournamentController:
         # Assigner le nouveau tournoi à la variable current_tournament
         self.current_tournament = new_tournament  
         # Ajoutez le nouveau tournoi à la liste
-        self.tournaments.append(new_tournament)  
-        print("nouveau tournoi")
-        print(*self.tournaments)
-        print("ligne 26")
+        self.tournaments.append(new_tournament)
+        self.update_tournament_json("tounamentDB.json")  
+        print("l26 tourcontrol - nouveau tournoi")
         return new_tournament
     
     """ fonction pour creer un fichier json"""
@@ -38,28 +37,25 @@ class TournamentController:
             with open(full_path, 'r') as f:
                 tournaments_data = json.load(f)
                 self.tournaments = [Tournament(**tournament_data) for tournament_data in tournaments_data]
-        else:
-            self.tournaments = []
             
     """ fonction pour mettre a jour le fichier json """
     def update_tournament_json(self, filename):
         data_folder = "data"
-        full_path = os.path.join(data_folder, filename)
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
+        full_path = os.path.join(data_folder, filename)    
         # Récupérez les données du tournoi
         tournaments_data = [tournament.__dict__ for tournament in self.tournaments]
+        print("Données du tournoi à enregistrer :", tournaments_data)
         # Écrivez les données dans le fichier JSON
         with open(full_path, "w", encoding="utf-8") as json_file:
             json.dump(tournaments_data, json_file, indent=4, ensure_ascii=False)
-            print(self.tournaments)
-            print("ligne53")
     
     """ fonction pour ajouter des joueurs au tournois"""
     def add_player_tournament(self, players):
         self.test = players
         if self.current_tournament is None:
-            print("Aucun tournoi en cours")
+            print("l60 tourcontrol - Aucun tournoi en cours")
             return
         for player in players:
             self.current_tournament.add_player(player)
@@ -80,7 +76,7 @@ class TournamentController:
         for i in range(0, len(round_players), 2):
             match = self.match_controller.add_match(round_players[i], round_players[i + 1], "white", "black")
             match.start_match()
-            print("start round tounoi")
+            print("l81 tourcontrol - start round tounoi")
             # Supposons que joueur 1 gagne
             self.match_controller.end_match(match, match.player1)
 
@@ -99,12 +95,12 @@ class TournamentController:
     """ fonction pour finir le tournois """
     def end_tournament(self, end_time):
         if self.current_tournament is None:
-            print("Aucun tournoi en cours.")
+            print("l68 tour control - Aucun tournoi en cours")
             return
         # Terminer le tournoi en définissant la date et l'heure de fin
         end_time = datetime.now()
         self.current_tournament.end_tournament(end_time)
-        print("Le tournoi est terminé")
+        print("l105 tourcontrol - Le tournoi est terminé")
         print("Date et heure de fin :", end_time)
 
     
@@ -112,8 +108,12 @@ class TournamentController:
     def load_tournament(self):
         pass
 
-    """ fonction pour avoir acces a la liste des tournois existant """
-
+    """ pour rechercher un tournoi specifique afin de modifier des informations"""
+    def get_tournament_by_name(self, name_tournament, date_start):
+        for tournament in self.tournaments:
+            if tournament.name_tournament == name_tournament and tournament.date_start == date_start:
+                return tournament
+        return None
 
     """ fonction pour supprimer un tournois"""
     def remove_tournament(self, tournament):
