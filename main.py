@@ -1,6 +1,7 @@
 
 from view.view import main_player_view
 from view.view import main_tournament_view
+from view.view import main_round_view
 
 def main_menu():
     while True:
@@ -19,7 +20,7 @@ def main_menu():
         elif choice == '2':
             main_tournament_view()
         elif choice == '3':
-            start_tournament()
+            main_round_view()
         # elif choice == '4':
         #     view_results()
         # elif choice == '5':

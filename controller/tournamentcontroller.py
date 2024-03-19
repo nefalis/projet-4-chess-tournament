@@ -4,13 +4,13 @@ import os
 from datetime import datetime
 
 from controller.playercontroller import PlayerController
-from controller.matchcontroller import MatchController
+from controller.roundcontroller import RoundController
 from models.tournament import Tournament
 
 class TournamentController:
     def __init__(self):
         self.player_controller = PlayerController()
-        self.match_controller = MatchController()
+        self.match_controller = RoundController()
         self.tournament_model = Tournament
         self.current_tournament = None
         self.tournaments = []
@@ -94,26 +94,52 @@ class TournamentController:
 
     """ fonction pour finir le tournois """
     def end_tournament(self, end_time):
-        if self.current_tournament is None:
-            print("l68 tour control - Aucun tournoi en cours")
-            return
+        if self.check_round_complete():
+            player_scores = {}
+            for tournament in self.tournaments:
+                for player in tournament.players:
+                    if player.name not in player_scores:
+                        player_scores[player.name] = 0
+                    player_scores[player.name] += player.score
+
+            # Déterminer le joueur avec le score le plus élevé comme vainqueur
+            winner_name = max(player_scores, key=player_scores.get)
+            winner_score = player_scores[winner_name]
+
+            # Afficher le vainqueur
+            print(f"Le vainqueur du tournoi est : {winner_name} avec un score de {winner_score} points")
+        else:
+            print("Le tournoi ne peut pas être terminé car tous les rounds n'ont pas été joués") 
+
         # Terminer le tournoi en définissant la date et l'heure de fin
+        end_time = datetime.now()
+        self.current_tournament.end_tournament(end_time)
+        print("Le tournoi est terminé.")
+        print("Date et heure de fin :", end_time)
+
+    # Terminer le tournoi en définissant la date et l'heure de fin
         end_time = datetime.now()
         self.current_tournament.end_tournament(end_time)
         print("l105 tourcontrol - Le tournoi est terminé")
         print("Date et heure de fin :", end_time)
 
-    
     """ fonction pour charger un tournois"""
     def load_tournament(self):
         pass
 
-    """ pour rechercher un tournoi specifique afin de modifier des informations"""
+    """ pour rechercher un tournoi specifique"""
     def get_tournament_by_name(self, name_tournament, date_start):
         for tournament in self.tournaments:
             if tournament.name_tournament == name_tournament and tournament.date_start == date_start:
                 return tournament
         return None
+    
+    """ fonction pour verifer que tout les round ont été fait """
+    def check_round_complete(self):
+        played_round = set()
+        for match in self.match_controller.matches:
+            played_round.add(match.round_number)
+        return len(played_round) == 4
 
     """ fonction pour supprimer un tournois"""
     def remove_tournament(self, tournament):

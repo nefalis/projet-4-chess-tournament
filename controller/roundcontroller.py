@@ -1,7 +1,7 @@
 
-from models.match import Match
+from models.round import Match
 
-class MatchController:
+class RoundController:
 
     def __init__(self):
         self.matches = []

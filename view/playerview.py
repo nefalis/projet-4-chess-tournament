@@ -6,7 +6,7 @@ class PlayerView:
         print("1. Créer un joueur")
         print("2. Afficher tous les joueurs")
         print("3. Supprimer un joueur")
-        print("4. Quitter")
+        print("4. Quitter le menu joueur")
 
     """ fonction pour les input de creation de joueur"""
     def create_player_input(player_controller):
