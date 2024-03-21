@@ -1,5 +1,6 @@
 from controller.tournamentcontroller import TournamentController
 from controller.roundcontroller import RoundController
+from view.tournamentview import TournamentView
 from datetime import datetime
 
 class RoundView:
@@ -8,7 +9,7 @@ class RoundView:
         self.round_controller = RoundController()
 
     """ fonction pour commencer un tournoi """
-    def display_menu_tournament():
+    def display_menu_round_tournament():
         print("Commencer un tournoi")
         print("1 Commencer le tournoi")
         print("2 Commencer le 1er round")
@@ -18,14 +19,15 @@ class RoundView:
 
     """ fonction pour demarrer le tournoi """
     def start_tournament_round(self):
-        if self.tournament_controller.current_tournament is None:
-            print("Aucun tournoi en cours.")
+        tournament = TournamentView.select_tournament(self.tournament_controller)
+        if tournament is None:
+            print("Aucun tournoi sélectionné")
             return
-    
         start_time = datetime.now()
-        # pour mettre a jour la date et heure au début du tournoi
-        self.tournament_controller.current_tournament.start_time = start_time
-        print(f"Le tournoi démarre à : {start_time}")
+        tournament.start_time = start_time
+        print(f"Le tournoi {tournament.name_tournament} démarre à : {start_time}")
+        self.tournament_controller.current_tournament = tournament
+        self.tournament_controller.start_tournament()
 
     """ fonction pour demarrer le 1er round """
     def start_first_round(self):
@@ -44,32 +46,7 @@ class RoundView:
             match.start_match()
         print("Le premier round du tournoi a démarré avec succès")
 
-    """ fonction pour enregistrer les résultat du 1er round """
-    def record_first_round_results(self):
-        print("Enregistrement des résultats pour le premier round :")
-        for match in self.round_controller.matches[:4]:
-            print(f"Match : {match.player1.name} vs {match.player2.name}")
-            while True:
-                winner = input("Vainqueur (entrez le nom du vainqueur, 'egalite' pour un match nul, ou 'back' pour revenir en arrière) : ")
-                if winner.lower() == 'egalite':
-                    match.end_match(None)
-                    break
-                # pour revenir en arrire
-                elif winner.lower() == 'back':
-                    break 
-                elif winner.strip():  
-                    if winner == match.player1.name:
-                        match.end_match(match.player1)
-                        break
-                    elif winner == match.player2.name:
-                        match.end_match(match.player2)
-                        break
-                    else:
-                        print("Nom de joueur invalide. Veuillez réessayer")
-                else:
-                    print("Veuillez saisir un nom de joueur ou 'egalite' pour un match nul, ou 'back' pour revenir en arrière")
-
-        print("Les résultats du premier round ont été enregistrés avec succès")
+    
 
     """ fonction pour passer au round suivant """
     def next_round(self):

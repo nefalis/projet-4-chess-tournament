@@ -18,7 +18,7 @@ class TournamentController:
 
     """ fonction pour creer un tournois"""
     def create_tournament(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament):
-        new_tournament = self.tournament_model(name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament)
+        new_tournament = self.tournament_model(name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players=[])
         # Assigner le nouveau tournoi à la variable current_tournament
         self.current_tournament = new_tournament  
         # Ajoutez le nouveau tournoi à la liste
@@ -37,7 +37,6 @@ class TournamentController:
             with open(full_path, 'r') as f:
                 tournaments_data = json.load(f)
                 self.tournaments = [Tournament(**tournament_data) for tournament_data in tournaments_data]
-            
     """ fonction pour mettre a jour le fichier json """
     def update_tournament_json(self, filename):
         data_folder = "data"

@@ -1,7 +1,7 @@
 
 """ Information sur le tournois """
 class Tournament:
-    def __init__(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament ):
+    def __init__(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players ):
         self.name_tournament = name_tournament
         self.town_tournament = town_tournament
         self.date_start = date_start
@@ -9,7 +9,7 @@ class Tournament:
         self.number_round = number_round
         self.number_player = number_player
         self.description_tournament = description_tournament
-        self.players = []
+        self.players = players
 
     """rajouter un get player pour donner liste joueur a la place de test"""
     def add_player(self, player):

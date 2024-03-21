@@ -70,19 +70,22 @@ def main_tournament_view():
         elif choice == '2':
             TournamentView.display_tournament(tournament_controller)
         elif choice == '3':
-            TournamentView.delete_tournament(tournament_controller)
+            main_round_view(tournament_controller) 
         elif choice == '4':
+            TournamentView.delete_tournament(tournament_controller)
+        elif choice == '5':
             print("Retour au menu principal\n")
             break
         else:
             print("Option invalide. Veuillez réessayer")
 
-def main_round_view():
-    tournament_controller = TournamentController()
+def main_round_view(tournament_controller):
+    # tournament_controller = TournamentController()
     round_view = RoundView(tournament_controller)
 
+
     while True:
-        RoundView.display_menu_tournament()
+        RoundView.display_menu_round_tournament()
         choice = input("Choisissez une option : ")
 
         if choice == '1':
@@ -92,7 +95,7 @@ def main_round_view():
         elif choice == '3':
             round_view.next_round()
         elif choice == '4':
-            TournamentController.end_tournament()
+            tournament_controller.end_tournament()
         elif choice == '5':
             print("Retour au menu principal\n")
             break

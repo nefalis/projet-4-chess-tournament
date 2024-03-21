@@ -11,7 +11,6 @@ def main_menu():
         print("3. Commencer un tournoi")
         print("4. Voir les résultats")
         print("5. Sortir un rapport")
-        print("6. Quitter")
 
         choice = input("Choisissez une option : ")
 
