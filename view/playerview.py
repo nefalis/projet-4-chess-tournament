@@ -1,4 +1,4 @@
-from controller.playercontroller import PlayerController
+
 class PlayerView:
     """ fonction pour creer le menu joueur"""
     def display_menu_player(player_controller):
@@ -17,12 +17,6 @@ class PlayerView:
         player_controller.create_player(first_name, last_name, birthday, score)
         print("Le joueur a été créé avec succès")
 
-    """ fonction pour afficher la liste des joueurs"""
-    def display_players(player_controller):
-        print("Liste des joueurs :")
-        for player in player_controller.players:
-            print(f"{player.first_name} {player.last_name}")
-
     """ fonction pour supprimer un joueur"""
     def delete_players(player_controller):
         print("Veuillez renseigner le prénom et nom du joueur a supprimer")
@@ -34,4 +28,3 @@ class PlayerView:
             print(f"{first_name} {last_name} a été supprimé")
         else:
             print("Le joueur spécifié n'existe pas")
-

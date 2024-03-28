@@ -2,17 +2,17 @@
 import json
 import os
 from datetime import datetime
-
-from controller.playercontroller import PlayerController
 from controller.roundcontroller import RoundController
+from controller.playercontroller import PlayerController
 from models.tournament import Tournament
+import random
 
 class TournamentController:
     def __init__(self):
         self.player_controller = PlayerController()
-        self.match_controller = RoundController()
         self.tournament_model = Tournament
         self.current_tournament = None
+        self.match_controller = RoundController(self)
         self.tournaments = []
         self.test = []
 
@@ -37,6 +37,7 @@ class TournamentController:
             with open(full_path, 'r') as f:
                 tournaments_data = json.load(f)
                 self.tournaments = [Tournament(**tournament_data) for tournament_data in tournaments_data]
+
     """ fonction pour mettre a jour le fichier json """
     def update_tournament_json(self, filename):
         data_folder = "data"
@@ -59,25 +60,28 @@ class TournamentController:
         for player in players:
             self.current_tournament.add_player(player)
 
-    """ fonction pour commencer un tournois"""
-    def start_tournament(self):
-        start_time = datetime.now()
-        print(f"Le tournoi démarre à : {start_time}")
-        for round_number in range(1, 5):
-            print(f"Round {round_number}")
-            self.start_round()
+    # """ fonction pour commencer un tournois"""
+    # def start_tournament(self):
+    #     for round_number in range(1, 5):
+    #         print(f"Round {round_number}")
+    #         self.start_round()
 
     """ fonction pour démarrer un tournois"""
     def start_round(self):
+
+        all_players = self.player_controller.get_players()
+        print("l73 tc all_player")
+        if len(all_players) < 8:
+            print("Il n'y a pas assez de joueurs pour commencer un tour")
+            return
         # Choisissez 8 joueurs aléatoires pour le round
-        round_players = self.player_controller.choose_random_players(8, self.test)
-        # Créez 4 matchs avec les joueurs choisis
-        for i in range(0, len(round_players), 2):
-            match = self.match_controller.add_match(round_players[i], round_players[i + 1], "white", "black")
-            match.start_match()
-            print("l81 tourcontrol - start round tounoi")
-            # Supposons que joueur 1 gagne
-            self.match_controller.end_match(match, match.player1)
+        round_players = random.sample(all_players, 8)
+        random.shuffle(round_players)
+        # Creation des matchs du round
+        matches = self.match_controller.create_matches(round_players)
+        # Afficher les paires de joueurs
+        self.match_controller.display_matches(matches)
+
 
     """ fonction pour les resultats des matchs """
     def get_match_result(self):
@@ -97,9 +101,9 @@ class TournamentController:
             player_scores = {}
             for tournament in self.tournaments:
                 for player in tournament.players:
-                    if player.name not in player_scores:
-                        player_scores[player.name] = 0
-                    player_scores[player.name] += player.score
+                    if player.first_name not in player_scores:
+                        player_scores[player.first_name] [player.last_name] = 0
+                    player_scores[player.first_name] [player.last_name] += player.score
 
             # Déterminer le joueur avec le score le plus élevé comme vainqueur
             winner_name = max(player_scores, key=player_scores.get)
@@ -125,6 +129,12 @@ class TournamentController:
     """ fonction pour charger un tournois"""
     def load_tournament(self):
         pass
+
+    """ fonction pour afficher la liste des tournois """
+    def display_tournament(tournament_controller):
+        print("Liste des tournois : ")
+        for tournament in tournament_controller.tournaments:
+            print(f"{tournament.name_tournament} {tournament.date_start}")
 
     """ pour rechercher un tournoi specifique"""
     def get_tournament_by_name(self, name_tournament, date_start):

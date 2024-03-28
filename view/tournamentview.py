@@ -1,5 +1,3 @@
-from controller.tournamentcontroller import TournamentController
-
 
 class TournamentView:
     """ fonction pour creer le menu tournoi """
@@ -7,7 +5,7 @@ class TournamentView:
         print("Menu tournoi\n")
         print("1. Ajouter une tournoi")
         print("2. Voir la liste des tournois")
-        print("3. Gestion du tournoi")
+        print("3. Commencer un tournoi")
         print("4. Supprimer un tournoi")
         print("5. Quitter le menu tournoi")
 
@@ -34,13 +32,6 @@ class TournamentView:
         tournament_controller.add_player_tournament(players)
         tournament_controller.update_tournament_json("tournamentDB.json")
         print("Le tournoi a été créé avec succès et les joueurs ont été ajoutés")
-
-
-    """ fonction pour afficher la liste des tournois """
-    def display_tournament(tournament_controller):
-        print("Liste des tournois : ")
-        for tournament in tournament_controller.tournaments:
-            print(f"{tournament.name_tournament} {tournament.date_start}")
 
     """ fonction pour selectionner un tournoi """
     def select_tournament(tournament_controller):

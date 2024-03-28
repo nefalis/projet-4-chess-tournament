@@ -16,14 +16,14 @@ class PlayerController:
 
     def __init__(self):
         self.players = []
+        self.load_players("./data/playersDB.json")
 
     """ fonction pour la création d'un joueur"""
     def create_player(self, first_name, last_name, birthday, score):
-        # Créez une instance de Player en utilisant les arguments fournis
         player = Player(first_name, last_name, birthday, score)
         self.players.append(player)
         self.update_player_json("playersDB.json")
-        print("l25 playcontrol - Le joueur a été crée")
+        print("Le joueur a été crée")
         return player 
     
     """ fonction pour creer un fichier json"""
@@ -45,7 +45,23 @@ class PlayerController:
         full_path = os.path.join(data_folder, filename)
         with open(full_path, "w", encoding="utf-8") as json_file:
             json.dump([player.__dict__ for player in self.players], json_file, indent=4, ensure_ascii=False)
-        
+
+    """ fonction pour charger les joueurs"""
+    def load_players(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                players_data = json.load(file)
+                self.players = [Player(player_data["first_name"], player_data["last_name"], player_data["birthday"], int(player_data["score"])) for player_data in players_data]
+        except FileNotFoundError:
+            print(f"Le fichier {filename} n'a pas été trouvé")
+        except json.JSONDecodeError:
+            print(f"Erreur lors du décodage du fichier JSON {filename}")
+
+    """ fonction pour avoir les joueurs"""
+    def get_players(self):
+        print("l62 pc get player")
+        return self.players
+
     """ pour mettre a jour les rangs"""
     def update_score(self, match_controller):
         # # Réinitialiser le score de tous les joueurs à 0
@@ -60,20 +76,21 @@ class PlayerController:
                 print("l59 playercontrol - je rajoute 1 au vainqueur")
 
     """ fonction pour choisir des joueurs aléatoire"""
-    def choose_random_players(self, list_players):
-        print(len(self.players))
+    def choose_random_players(self):
         print("ligne64 playercontrol")
-        print(list_players)
-        # if list_players > len(self.players qui devient test et get au final):
-        #     print("Il n'y a pas assez de joueurs disponible.")
-        #     return []
-        population = self.players
-        if list_players > len(population):
-            print("Le nombre de joueurs à sélectionner est supérieur au nombre de joueurs disponibles")
+        if len(self.players) % 2 != 0:
+            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
             return []
-        random_players = random.sample(population, list_players)
+        random_players = random.sample(self.players, len(self.players))
         print("l71 playcontrol - pik nik douille c'est toi l'andouille")
         return random_players
+    
+    """ fonction pour afficher la liste des joueurs"""
+    def display_players(player_controller):
+        print("Liste des joueurs :")
+        print(len(player_controller.players))
+        for player in player_controller.players:
+            print(f"{player.first_name} {player.last_name}")        
 
     """ pour mettre a jour les points"""
     def update_points(self, player, points):
@@ -95,9 +112,6 @@ class PlayerController:
             print(f"Le joueur {player.first_name} {player.last_name} a été supprimé.")
         else:
             print("Le joueur spécifié n'existe pas dans la liste des joueurs.")
-
-# Créez une instance de PlayerController
-controller = PlayerController()
 
 # # liste de joueur
 # controller.create_player("Pouet Pouet", "Camembert", "16/06/2000", 1),
