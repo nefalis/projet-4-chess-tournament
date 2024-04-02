@@ -40,7 +40,7 @@ def main_tournament_view():
         elif choice == '2':
             TournamentController.display_tournament(tournament_controller)
         elif choice == '3':
-            round_controller.start_tournament_round()
+            tournament_controller.start_tournament()
         elif choice == '4':
             TournamentView.delete_tournament(tournament_controller)
         elif choice == '5':

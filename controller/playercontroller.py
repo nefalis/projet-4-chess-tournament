@@ -8,7 +8,7 @@ D delete
 import json
 import os
 import random
-
+from models.round import Match
 from models.player import Player
 
 """ fonction pour creer un joueur"""
@@ -64,23 +64,35 @@ class PlayerController:
 
     """ pour mettre a jour les rangs"""
     def update_score(self, match_controller):
-        # # Réinitialiser le score de tous les joueurs à 0
-        # for player in self.players:
-        #     player.score = 0
-        # Parcourir tous les matchs
         for match in match_controller.matches:
-            # Si un vainqueur est déclaré
             if match.winner:
-                # Incrémenter le score du vainqueur de ce match
-                match.winner.score += 1
-                print("l59 playercontrol - je rajoute 1 au vainqueur")
+                match.winner.score += 1  
+                self.update_player_json("playersDB.json")
+                print("Le score du joueur gagnant a été mis à jour dans le fichier JSON.")
+            else:
+                for player in [match.player1, match.player2]:
+                    player.score += 0.5
+                    self.update_player_json("playersDB.json")
+                    print("Le score des joueurs a été mis à jour dans le fichier JSON.")
 
-    """ fonction pour choisir des joueurs aléatoire"""
-    def choose_random_players(self):
+    """fontion pour faire 2 listes de joueur  """
+    def create_match_pairs(self, players, color_player1, color_player2, round_number):
+        group1 = players[:len(players)//2]
+        group2 = players[len(players)//2:]
+
+        match_pairs = []
+        for player1, player2 in zip(group1, group2):
+            match = Match(player1, player2, color_player1, color_player2, round_number)
+            match_pairs.append((match))
+
+        return match_pairs
+
+    """ fonction pour choisir des joueurs aléatoire et decalé de 1 apres chaque round """
+    def choose_random_players(self, color_player1, color_player2, round_number):
         print("ligne64 playercontrol")
         if len(self.players) % 2 != 0:
-            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
-            return []
+                print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+                return []
         random_players = random.sample(self.players, len(self.players))
         print("l71 playcontrol - pik nik douille c'est toi l'andouille")
         return random_players
