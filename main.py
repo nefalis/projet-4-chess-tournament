@@ -5,7 +5,6 @@ from controller.playercontroller import PlayerController
 # from view.view import main_round_view
 
 def main_menu():
-    player_controller = PlayerController() 
 
     while True:
         print("Menu navigation\n")

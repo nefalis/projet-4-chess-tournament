@@ -11,9 +11,12 @@ class Tournament:
         self.description_tournament = description_tournament
         self.players = players
 
-    """rajouter un get player pour donner liste joueur a la place de test"""
     def add_player(self, player):
-        self.players.append(player)
+        player_dict = dict(
+            first_name = player.first_name,     
+            last_name = player.last_name,
+            score = player.score)
+        self.players.append(player_dict)
 
     def end_tournament(self, end_time):
         self.date_finish = end_time

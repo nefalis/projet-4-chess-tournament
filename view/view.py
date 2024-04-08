@@ -29,14 +29,14 @@ def main_player_view():
 def main_tournament_view():
     tournament_controller = TournamentController()
     tournament_controller.create_tournament_json("tournamentDB.json")
-    round_controller = RoundController(tournament_controller)
+    player_controller = PlayerController()
 
     while True:
         TournamentView.display_menu_tournament(tournament_controller)
         choice = input("Choisissez une option : ")
 
         if choice == '1':
-            TournamentView.create_tournament_input(tournament_controller)
+            TournamentView.create_tournament_input(tournament_controller, player_controller)
         elif choice == '2':
             TournamentController.display_tournament(tournament_controller)
         elif choice == '3':

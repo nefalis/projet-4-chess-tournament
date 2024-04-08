@@ -8,7 +8,7 @@ D delete
 import json
 import os
 import random
-from models.round import Match
+
 from models.player import Player
 
 """ fonction pour creer un joueur"""
@@ -16,11 +16,13 @@ class PlayerController:
 
     def __init__(self):
         self.players = []
+        self.selected_players = []
         self.load_players("./data/playersDB.json")
+        self.player_id_counter = 1
 
     """ fonction pour la création d'un joueur"""
-    def create_player(self, first_name, last_name, birthday, score):
-        player = Player(first_name, last_name, birthday, score)
+    def create_player(self, national_chess_id, first_name, last_name, birthday, score):
+        player = Player(national_chess_id, first_name, last_name, birthday, score)
         self.players.append(player)
         self.update_player_json("playersDB.json")
         print("Le joueur a été crée")
@@ -51,7 +53,7 @@ class PlayerController:
         try:
             with open(filename, 'r') as file:
                 players_data = json.load(file)
-                self.players = [Player(player_data["first_name"], player_data["last_name"], player_data["birthday"], int(player_data["score"])) for player_data in players_data]
+                self.players = [Player(player_data["national_chess_id"], player_data["first_name"], player_data["last_name"], player_data["birthday"], int(player_data["score"])) for player_data in players_data]
         except FileNotFoundError:
             print(f"Le fichier {filename} n'a pas été trouvé")
         except json.JSONDecodeError:
@@ -62,52 +64,20 @@ class PlayerController:
         print("l62 pc get player")
         return self.players
 
-    """ pour mettre a jour les rangs"""
-    def update_score(self, match_controller):
-        for match in match_controller.matches:
-            if match.winner:
-                match.winner.score += 1  
-                self.update_player_json("playersDB.json")
-                print("Le score du joueur gagnant a été mis à jour dans le fichier JSON.")
-            else:
-                for player in [match.player1, match.player2]:
-                    player.score += 0.5
-                    self.update_player_json("playersDB.json")
-                    print("Le score des joueurs a été mis à jour dans le fichier JSON.")
+    
 
-    """fontion pour faire 2 listes de joueur  """
-    def create_match_pairs(self, players, color_player1, color_player2, round_number):
-        group1 = players[:len(players)//2]
-        group2 = players[len(players)//2:]
-
-        match_pairs = []
-        for player1, player2 in zip(group1, group2):
-            match = Match(player1, player2, color_player1, color_player2, round_number)
-            match_pairs.append((match))
-
-        return match_pairs
-
-    """ fonction pour choisir des joueurs aléatoire et decalé de 1 apres chaque round """
-    def choose_random_players(self, color_player1, color_player2, round_number):
-        print("ligne64 playercontrol")
-        if len(self.players) % 2 != 0:
-                print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
-                return []
-        random_players = random.sample(self.players, len(self.players))
-        print("l71 playcontrol - pik nik douille c'est toi l'andouille")
-        return random_players
+   
     
     """ fonction pour afficher la liste des joueurs"""
-    def display_players(player_controller):
+    def display_players(self):
         print("Liste des joueurs :")
-        print(len(player_controller.players))
-        for player in player_controller.players:
-            print(f"{player.first_name} {player.last_name}")        
+        for player in self.players:
+            print(f"{player.first_name} {player.last_name}")          
 
-    """ pour mettre a jour les points"""
-    def update_points(self, player, points):
-        player.score += points
-        print("l77 player control - up point")
+    # """ pour mettre a jour les points"""
+    # def update_points(self, player, points):
+    #     player.score += points
+    #     print("l77 player control - up point")
 
     """ pour rechercher un joueur specifique afin de modifier des informations"""
     def get_player_by_name(self, first_name, last_name):
@@ -115,7 +85,8 @@ class PlayerController:
             if player.first_name == first_name and player.last_name == last_name:
                 return player
         return None
-
+    
+    
     """ fonction pour enlever un joueur"""
     def remove_player(self, player):
         if player in self.players:
@@ -123,7 +94,27 @@ class PlayerController:
             self.update_player_json("playersDB.json")
             print(f"Le joueur {player.first_name} {player.last_name} a été supprimé.")
         else:
-            print("Le joueur spécifié n'existe pas dans la liste des joueurs.")
+            print("Le joueur spécifié n'existe pas dans la liste des joueurs")
+
+
+""" fonction pour choisir des joueurs aléatoire)
+    def choose_random_players(self):
+        print("ligne64 playercontrol")
+        print(list_players)
+        # if list_players > len(self.players qui devient test et get au final):
+        #     print("Il n'y a pas assez de joueurs disponible.")
+        #     return []
+        population = self.players
+        if list_players > len(population):
+            print("Le nombre de joueurs à sélectionner est supérieur au nombre de joueurs disponibles")
+        if len(self.players) % 2 != 0:
+            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+            return []
+        random_players = random.sample(population, list_players)
+        random_players = random.sample(self.players, len(self.players))
+        print("l71 playcontrol - pik nik douille c'est toi l'andouille")
+        return random_players """
+
 
 # # liste de joueur
 # controller.create_player("Pouet Pouet", "Camembert", "16/06/2000", 1),

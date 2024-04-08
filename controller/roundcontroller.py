@@ -1,9 +1,7 @@
 from models.round import Match
 from controller.playercontroller import PlayerController
 from datetime import datetime
-from models.player import Player
-import random
-import json
+from pprint import pprint
 
 class RoundController:
 
@@ -12,17 +10,12 @@ class RoundController:
         self.tournament_controller = tournament_controller
         self.player_controller = PlayerController()
         self.current_round_number = 0
+        self.total_rounds = 4
 
     def add_match(self, player1, player2, color_player1, color_player2, round_number):
-        # match = Match(player1, player2, color_player1, color_player2, round_number)
-        # self.matches.append(match)
-        # return match
-        player1_obj = player1
-        player2_obj = player2
-        match = Match(player1_obj, player2_obj, color_player1, color_player2, round_number)
+        match = Match(player1, player2, color_player1, color_player2, round_number)
         self.matches.append(match)
         return match
-    
 
     def end_match(self, match, winner):
         match.winner = winner
@@ -38,36 +31,57 @@ class RoundController:
             for player in [match.player1, match.player2]:
                 player.score += 0.5
 
+    """ fonction pour afficher les resultats apres chaque round"""
+    def display_round_results(self, round_number):
+        print(f"Résultats du Round {round_number}:")
+        for match in self.matches[:4]:
+            if match.winner is not None :
+                winner_name = f"{match.winner["first_name"]} {match.winner["last_name"]}"
+            else:
+                winner_name = "Égalité"
+
+            print(f"{match.player1["first_name"]} {match.player1["last_name"]} vs {match.player2["first_name"]} {match.player2["last_name"]}: {winner_name}")
+
+    """ pour mettre a jour les rangs"""
+    def update_score(self):
+        for match in self.matches:
+            self.end_match(match, match.winner)
+        self.tournament_controller.update_tournament_json("tournamentDB.json")
+        print("Le score des joueurs a été mis à jour dans le fichier JSON.")
+
     """ fonction pour enregistrer les résultat du 1er round """
     def record_match_results(self, round_number):
         print(f"Enregistrement des résultats du round {round_number} :")
-        for match in self.matches[:4]:
-            print(f"Match : {match.player1.first_name} {match.player1.last_name} vs {match.player2.first_name} {match.player2.last_name}")
+        
+        for match_index, match in enumerate(self.matches[:4], start=1):
+            print(f"Match {match_index}:")
+            for player_index, player in enumerate([match.player1, match.player2], start=1):
+                print(f"{player_index}. {player["first_name"]} {player["last_name"]}")
             while True:
-                winner = input("Vainqueur (entrez le prenom du vainqueur, 'egalite' pour un match nul, ou 'back' pour revenir en arrière) : ")
+                winner = input(f"Match {match_index}, Vainqueur (entrez le numéro du vainqueur (1 ou 2), 'egalite' pour un match nul, ou 'back' pour revenir en arrière) : ")
                 if winner.lower() == 'egalite':
-                    self.end_match(match, None)
+                    match.winner = None
+                    self.update_score()
                     break
                 # pour revenir en arriere
                 elif winner.lower() == 'back':
                     break 
                 elif winner.strip():  
-                    if winner == match.player1.first_name:
-                        self.end_match(match, match.player1)
-                        self.player_controller.update_score(self)
+                    winner = int(winner)
+                    if winner == 1:
+                        match.winner = match.player1
                         break
-                    elif winner == match.player2.first_name:
-                        self.end_match(match, match.player2)
-                        self.player_controller.update_score(self)
+                    elif winner == 2:
+                        match.winner = match.player2
                         break
                     else:
-                        print("Nom de joueur invalide. Veuillez réessayer")
+                        print("Numéro du joueur invalide. Veuillez réessayer")
                 else:
-                    print("Veuillez saisir un nom de joueur ou 'egalite' pour un match nul, ou 'back' pour revenir en arrière")
+                    print("Veuillez saisir un numero de joueur ou 'egalite' pour un match nul, ou 'back' pour revenir en arrière")
 
-        print("Les résultats du round ont été enregistrés avec succès")
-
-
+        print("rc l 76 - Les résultats du round ont été enregistrés avec succès")
+        # Afficher les résultats du round
+        self.display_round_results(round_number)
 
     """ fonction pour passer au round suivant """
     def next_round(self):
@@ -95,35 +109,43 @@ class RoundController:
         color_player1 = "white"
         color_player2 = "black"
 
-        match_pairs = self.player_controller.choose_random_players(color_player1, color_player2, round_number)
+        match_pairs = self.tournament_controller.choose_random_players()
+        # if round_number == 1:
+        #     match_pairs = self.player_controller.choose_random_players()
 
+        # else:
+        #     print(self.player_controller)
+        #     sorted_players = sorted(self.player_controller, key=lambda x: x.score, reverse=True)
+        #     for player in sorted_players:
+        #         print(f"{player.first_name} {player.last_name} - Score: {player.score}")
+            
         matches = self.create_matches(match_pairs, round_number)
-        # all_players = self.player_controller.get_players()
-        # print("l73 tc all_player")
-        # if len(all_players) < 8:
-        #     print("Il n'y a pas assez de joueurs pour commencer un tour")
-        #     return
-        # # Choisissez 8 joueurs aléatoires pour le round
-        # round_players = random.sample(all_players, 8)
-        # random.shuffle(round_players)
-        # Creation des matchs du round
-        # matches = self.create_matches(round_players, round_number)
-        # Afficher les paires de joueurs
         self.display_matches(matches)
 
     """ fonction pour afficher les joueurs des matchs"""
     def display_matches(self, matches):
-        for e, match in enumerate(matches, start=1):
-            print(f"Match {e}: {match.player1.first_name} {match.player1.last_name} vs {match.player2.first_name} {match.player2.last_name}")
-
+        for i, match in enumerate(matches, start=1):
+            print(f"Match {i}: {match.player1["first_name"]} {match.player1["last_name"]} vs {match.player2["first_name"]} {match.player2["last_name"]}")
+    
+    """ fonction pour collecter les resultats des matchs """
+    def get_match_result(self):
+        match_results = []
+        for match in self.matches:
+            match_result = {
+                "player1": match.player1,
+                "player2": match.player2,
+                "winner": match.winner
+            }
+            match_results.append(match_result)
+        return match_results
 
     """ fonction pour creer les matchs pour 1 round  """
-    def create_matches(self, round_players, round_number):
+    def create_matches(self, players, round_number):
         matches =[]
-        for i in range(0, len(round_players) - 1, 2):
+        for i in range(0, len(players) - 1, 2):
         # Vérifiez si l'index suivant dépasse la limite de la liste
-            if i + 1 < len(round_players):
-                match = self.add_match(round_players[i], round_players[i + 1], "white", "black", round_number)
+            if i + 1 < len(players):
+                match = self.add_match(players[i], players[i + 1], "white", "black", round_number)
                 matches.append(match)
         return matches
 
@@ -131,14 +153,9 @@ class RoundController:
     """ fonction pour verifier que tout les round ont été fait """
     def check_round_complete(self, round_number):
         print(" l133 rc verif round complet", round_number)
-        if len(self.matches) == 4:
-            for match in self.matches:
-                if match.round_number == round_number and match.winner is None:
-                    return False
+        if self.current_round_number >= self.total_rounds:
             return True
         return False
-    
-    
     
     # """ fonction pour demarrer le tournoi """
     # def start_tournament_round(self):
