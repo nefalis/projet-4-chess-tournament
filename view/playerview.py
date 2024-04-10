@@ -1,8 +1,9 @@
 
+from rich import print
 class PlayerView:
     """ fonction pour creer le menu joueur"""
     def display_menu_player(player_controller):
-        print("Menu joueur\n")
+        print(f"[cyan]-- Menu Joueur -- [/cyan]\n")
         print("1. Créer un joueur")
         print("2. Afficher tous les joueurs")
         print("3. Supprimer un joueur")

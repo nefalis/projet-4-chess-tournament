@@ -1,17 +1,17 @@
 
 from view.view import main_player_view
 from view.view import main_tournament_view
-from controller.playercontroller import PlayerController
-# from view.view import main_round_view
+from view.view import main_report_view
+from rich import print
 
 def main_menu():
 
     while True:
-        print("Menu navigation\n")
+        print(f"\n[cyan]-- Menu navigation -- [/cyan]\n")
         print("1. Menu joueur")
         print("2. Menu tournoi")
-        print("3. Voir les résultats")
-        print("4. Sortir un rapport")
+        print("3. Rapport")
+        # print("4. Sortir un rapport")
 
         choice = input("Choisissez une option : ")
 
@@ -19,13 +19,9 @@ def main_menu():
             main_player_view()
         elif choice == '2':
             main_tournament_view()
-        # elif choice == '3':
-        #     PlayerController.display_players(player_controller)
-        # elif choice == '4':
-        #     view_results()
-        # elif choice == '5':
-        #     generate_report()
-        elif choice == '6':
+        elif choice == '3':
+            main_report_view()
+        elif choice == '4':
             print("Au revoir")
             break
         else:

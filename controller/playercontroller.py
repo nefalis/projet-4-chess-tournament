@@ -4,11 +4,9 @@ R read
 U uptdate
 D delete
 """
-
 import json
 import os
 import random
-
 from models.player import Player
 
 """ fonction pour creer un joueur"""
@@ -61,23 +59,13 @@ class PlayerController:
 
     """ fonction pour avoir les joueurs"""
     def get_players(self):
-        print("l62 pc get player")
         return self.players
 
-    
-
-   
-    
     """ fonction pour afficher la liste des joueurs"""
     def display_players(self):
         print("Liste des joueurs :")
         for player in self.players:
             print(f"{player.first_name} {player.last_name}")          
-
-    # """ pour mettre a jour les points"""
-    # def update_points(self, player, points):
-    #     player.score += points
-    #     print("l77 player control - up point")
 
     """ pour rechercher un joueur specifique afin de modifier des informations"""
     def get_player_by_name(self, first_name, last_name):
@@ -85,7 +73,6 @@ class PlayerController:
             if player.first_name == first_name and player.last_name == last_name:
                 return player
         return None
-    
     
     """ fonction pour enlever un joueur"""
     def remove_player(self, player):
@@ -97,23 +84,10 @@ class PlayerController:
             print("Le joueur spécifié n'existe pas dans la liste des joueurs")
 
 
-""" fonction pour choisir des joueurs aléatoire)
-    def choose_random_players(self):
-        print("ligne64 playercontrol")
-        print(list_players)
-        # if list_players > len(self.players qui devient test et get au final):
-        #     print("Il n'y a pas assez de joueurs disponible.")
-        #     return []
-        population = self.players
-        if list_players > len(population):
-            print("Le nombre de joueurs à sélectionner est supérieur au nombre de joueurs disponibles")
-        if len(self.players) % 2 != 0:
-            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
-            return []
-        random_players = random.sample(population, list_players)
-        random_players = random.sample(self.players, len(self.players))
-        print("l71 playcontrol - pik nik douille c'est toi l'andouille")
-        return random_players """
+    # """ pour mettre a jour les points"""
+    # def update_points(self, player, points):
+    #     player.score += points
+    #     print("l77 player control - up point")
 
 
 # # liste de joueur

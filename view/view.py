@@ -1,18 +1,17 @@
 from controller.playercontroller import PlayerController
 from controller.tournamentcontroller import TournamentController
-from controller.roundcontroller import RoundController
+from controller.reportcontrolle import ReportController
 from view.playerview import PlayerView
 from view.tournamentview import TournamentView
-from view.roundview import RoundView
+from view.reportview import ReportView
 
 def main_player_view():
-    # création d'une intance player_controller
     player_controller = PlayerController()
     player_controller.create_player_json("./data/playersDB.json")
 
     while True:
         PlayerView.display_menu_player(player_controller)
-        choice = input("Choisissez une option : ")
+        choice = input(f"\n Choisissez une option : ")
 
         if choice == '1':
             PlayerView.create_player_input(player_controller)
@@ -33,7 +32,7 @@ def main_tournament_view():
 
     while True:
         TournamentView.display_menu_tournament(tournament_controller)
-        choice = input("Choisissez une option : ")
+        choice = input(f"\n Choisissez une option : ")
 
         if choice == '1':
             TournamentView.create_tournament_input(tournament_controller, player_controller)
@@ -49,25 +48,23 @@ def main_tournament_view():
         else:
             print("Option invalide. Veuillez réessayer")
 
-# def main_round_view(tournament_controller):
-#     # tournament_controller = TournamentController()
-#     round_controller = RoundController(tournament_controller)
+def main_report_view():
+    report_controller = ReportController()
 
+    while True:
+        ReportView.display_menu_report(report_controller)
+        choice = input(" Choisissez une option : ")
 
-#     while True:
-#         RoundView.display_menu_round_tournament()
-#         choice = input("Choisissez une option : ")
-
-#         if choice == '1':
-#             round_controller.start_tournament_round()
-#         elif choice == '2':
-#             round_controller.start_first_round()
-#         elif choice == '3':
-#             round_controller.next_round()
-#         elif choice == '4':
-#             tournament_controller.end_tournament()
-#         elif choice == '5':
-#             print("Retour au menu principal\n")
-#             break
-#         else:
-#             print("Option invalide. Veuillez réessayer")
+        if choice == '1':
+            report_controller.display_all_player()
+        elif choice == '2':
+            report_controller.display_all_tournament()
+        elif choice == '3':
+            report_controller.display_tournament_report()
+        # elif choice == '4':
+        #     tournament_controller.end_tournament()
+        elif choice == '5':
+            print("Retour au menu principal\n")
+            break
+        else:
+            print("Option invalide. Veuillez réessayer")
