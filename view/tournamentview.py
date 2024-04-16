@@ -7,7 +7,7 @@ class TournamentView:
     """ fonction pour creer le menu tournoi """
     def display_menu_tournament(tournament_controller):
         print(f"\n[cyan]-- Menu tournoi --[/cyan]\n")
-        print("1. Ajouter une tournoi")
+        print("1. Ajouter un tournoi")
         print("2. Voir la liste des tournois")
         print("3. Commencer un tournoi")
         print("4. Supprimer un tournoi")

@@ -2,6 +2,7 @@ from models.round import Match
 from controller.playercontroller import PlayerController
 from datetime import datetime
 from rich import print
+import random
 from pprint import pprint
 
 class RoundController:
@@ -30,12 +31,12 @@ class RoundController:
 
             print(f"{match.player1['first_name']} {match.player1['last_name']} vs {match.player2['first_name']} {match.player2['last_name']}: {winner_name}")
 
-    """ pour mettre a jour les rangs"""
-    def update_score(self):
-        for match in self.matches:
-            self.end_match(match, match.winner)
-        self.tournament_controller.update_tournament_json("tournamentDB.json")
-        print("Le score des joueurs a été mis à jour dans le fichier JSON.")
+    # """ pour mettre a jour les rangs"""
+    # def update_score(self, matches):
+    #     for match in matches:
+    #         self.end_match(match, match.winner)
+    #     self.tournament_controller.update_tournament_json("tournamentDB.json")
+    #     print("Le score des joueurs a été mis à jour dans le fichier JSON.")
 
     def end_match(self, match, winner):
         match.winner = winner
@@ -54,11 +55,11 @@ class RoundController:
                     player["score"] += 0.5
 
     """ fonction pour enregistrer les résultat du round """
-    def record_match_results(self, round_number):
+    def record_match_results(self, round_number, matches):
         self.current_round_number = round_number 
         print(f"\n[green]Enregistrement des résultats du round {round_number} :[/green]")
         
-        for match_index, match in enumerate(self.matches[:4], start=1):
+        for match_index, match in enumerate(matches[:4], start=1):
             print(f"Match {match_index}:")
             for player_index, player in enumerate([match.player1, match.player2], start=1):
                 print(f"{player_index}. {player["first_name"]} {player["last_name"]}")
@@ -86,10 +87,23 @@ class RoundController:
                     print("Veuillez saisir un numero de joueur ou 'egalite' pour un match nul, ou 'back' pour revenir en arrière")
 
         print("Les résultats du round ont été enregistrés avec succès")
+
         # Afficher les résultats du round
         self.display_round_results(round_number)
         end_time = datetime.now()
         print(f"\n[blue] Fin du round {round_number} - {end_time} [/blue]")
+
+        # Mettre à jour les informations du tour et les résultats des matchs
+        round_info = {
+            "round_number": round_number,
+            "matches": self.get_match_result(matches)  
+        }
+        self.tournament_controller.update_round_info(round_number, round_info)
+
+        # Mettre à jour le fichier JSON
+        self.tournament_controller.update_tournament_json("tournamentDB.json")
+
+        print(self.tournament_controller.round_info)
     
     """ fonction pour démarrer un tournois"""
     def start_round(self, round_number):
@@ -97,33 +111,37 @@ class RoundController:
         start_time = datetime.now()
         print(f"[blue]\n Round {round_number} - {start_time} [/blue]\n")
         
-        color_player1 = "white"
-        color_player2 = "black"
-
-        # match_pairs = self.tournament_controller.choose_random_players()
-        if round_number == 1:
-            match_pairs = self.tournament_controller.choose_random_players()
-
-        else:
-            tournament_players = self.tournament_controller.get_tournament_players()
-            sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
-            for player in sorted_players:
-                print(f"{player["first_name"]} {player["last_name"]} - Score: {player["score"]}")
-            match_pairs = []
-
-        matches = self.create_matches(match_pairs, round_number)
+        # je recupere les joueurs
+        tournament_players = self.tournament_controller.get_tournament_players()
+        # je trie les joueurs
+        sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
+        # je verifie si round supérieur a 1
+        # si oui on choisit au hasard
+        # si non on choisit par score et on verif si ils ont deja joué ensemble
+        if round_number > 1:
+            selected_players = sorted_players
+        else :
+            selected_players = random.sample(sorted_players, len(tournament_players))
+        # debut match (create_matches ? )
+        matches = []
+        matches = self.create_matches(selected_players, round_number)
         self.display_matches(matches)
-
+        self.record_match_results(round_number, matches)
+        self.get_match_result(matches)
+            
+        #     for i in range(0, len(sorted_players), 2):
+        #         if i + 1 < len(sorted_players):
+        #             match_pairs.append({"player1": sorted_players[i], "player2": sorted_players[i + 1]})
 
     """ fonction pour afficher les joueurs des matchs"""
-    def display_matches(self, round_number):
-        for i, match in enumerate(self.matches, start=1):
+    def display_matches(self, matches):
+        for i, match in enumerate(matches, start=1):
             print( f"Match {i}: {match.player1['first_name']} {match.player1['last_name']} vs {match.player2['first_name']} {match.player2['last_name']} ")
     
     """ fonction pour collecter les resultats des matchs """
-    def get_match_result(self):
+    def get_match_result(self, matches):
         match_results = []
-        for match in self.matches:
+        for match in matches:
             match_result = {
                 "player1": match.player1,
                 "player2": match.player2,
@@ -135,6 +153,10 @@ class RoundController:
     """ fonction pour creer les matchs pour 1 round  """
     def create_matches(self, players, round_number):
         matches =[]
+        if len(self.tournament_controller.current_tournament.players) % 2 != 0:   
+            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+            return []
+        
         for i in range(0, len(players) - 1, 2):
         # Vérifiez si l'index suivant dépasse la limite de la liste
             if i + 1 < len(players):

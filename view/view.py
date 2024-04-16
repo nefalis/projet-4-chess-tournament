@@ -49,7 +49,10 @@ def main_tournament_view():
             print("Option invalide. Veuillez réessayer")
 
 def main_report_view():
-    report_controller = ReportController()
+    tournament_controller = TournamentController()
+    tournament_controller.create_tournament_json("tournamentDB.json")
+    report_controller = ReportController(tournament_controller)
+    
 
     while True:
         ReportView.display_menu_report(report_controller)
@@ -60,10 +63,12 @@ def main_report_view():
         elif choice == '2':
             report_controller.display_all_tournament()
         elif choice == '3':
-            report_controller.display_tournament_report()
-        # elif choice == '4':
-        #     tournament_controller.end_tournament()
+            report_controller.display_tournament_date_report()
+        elif choice == '4':
+            report_controller.display_tournament_player_report()
         elif choice == '5':
+            report_controller.display_tournament_report()   
+        elif choice == '6':
             print("Retour au menu principal\n")
             break
         else:

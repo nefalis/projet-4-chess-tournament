@@ -1,7 +1,7 @@
 
 """ Information sur le tournois """
 class Tournament:
-    def __init__(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players ):
+    def __init__(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players):
         self.name_tournament = name_tournament
         self.town_tournament = town_tournament
         self.date_start = date_start
@@ -20,3 +20,4 @@ class Tournament:
 
     def end_tournament(self, end_time):
         self.date_finish = end_time
+
