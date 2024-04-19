@@ -94,6 +94,11 @@ class ReportController:
             print("Aucun tournoi sélectionné.")
             return
         
+    
+        print("l 100")
+        print(self.tournament_controller.round_info)
+        
+        
         # Créer un tableau pour afficher les informations du tournoi
         table_tournament_info = Table(title=f"Informations sur le tournoi {selected_tournament.name_tournament}")
         table_tournament_info.add_column("Nom", style="cyan")
@@ -106,11 +111,20 @@ class ReportController:
                                         str(selected_tournament.date_finish),
                                         str(selected_tournament.town_tournament),
                                         selected_tournament.number_round)
-        print(table_tournament_info)
     
-        if selected_tournament:
-            for round_number, matches in selected_tournament():
-                print(f"Détails du round : {round_number}")
-                for match in matches:
-                    winner_name = match.winner["first_name"] + " " + match.winner["last_name"] if match.winner else "Égalité"
-                    print(f"Match : {match.player1['first_name']} {match.player1['last_name']} vs {match.player2['first_name']} {match.player2['last_name']}, Vainqueur : {winner_name}")
+        # # Créer un tableau pour afficher les informations sur les matchs pour chaque round
+        # table_round_matches = Table(title="Matchs par round")
+        # table_round_matches.add_column("Round", style="deep_sky_blue")
+        # table_round_matches.add_column("Joueur 1")
+        # table_round_matches.add_column("Joueur 2")
+        # table_round_matches.add_column("Vainqueur")
+
+        # # Ajouter les informations sur les matchs pour chaque round
+        # for round_number, round_info in round_info():
+        #     for match in round_info(matches):
+        #         table_round_matches.add_row(round_number, match["player1"], match["player2"], match["winner"])
+
+        # Afficher les deux tableaux
+        print(table_tournament_info)
+        # print(table_round_matches)
+        

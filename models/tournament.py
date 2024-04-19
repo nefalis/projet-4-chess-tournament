@@ -1,5 +1,6 @@
 
 """ Information sur le tournois """
+from pprint import pprint
 class Tournament:
     def __init__(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players):
         self.name_tournament = name_tournament
@@ -13,10 +14,14 @@ class Tournament:
 
     def add_player(self, player):
         player_dict = dict(
+            national_chess_id = player.national_chess_id,
             first_name = player.first_name,     
             last_name = player.last_name,
-            score = player.score)
+            score = player.score,
+            played_with = player.played_with,
+            selected = False)
         self.players.append(player_dict)
+
 
     def end_tournament(self, end_time):
         self.date_finish = end_time

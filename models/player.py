@@ -7,7 +7,13 @@ class Player:
         self.last_name = last_name
         self.birthday = birthday
         self.score = score
+        self.played_with = []
+        
+
 
     def update_score(self, points):
         self.score += points
+
+    def add_id(self, id):
+        self.id = id
 

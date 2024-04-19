@@ -70,7 +70,7 @@ class TournamentController:
         if self.current_tournament is None:
             print("Aucun tournoi en cours")
             return
-        for player in selected_players:
+        for player in (selected_players):
             self.current_tournament.add_player(player)
 
     """ fonction pour commencer un tournois"""
@@ -123,8 +123,7 @@ class TournamentController:
     """ fonction pour voir les joueurs du tournoi """
     def get_tournament_players(self):
         tournament_players = self.current_tournament.players
-        print(" l126 tc")
-        print(tournament_players)
+   
         return tournament_players
     
     """ fonction pour avoir les tournois"""
