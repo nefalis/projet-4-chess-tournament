@@ -65,7 +65,7 @@ class RoundController:
                 print(f"{player_index}. {player["first_name"]} {player["last_name"]}")
             while True:
                 winner = input(f"Match {match_index}, Vainqueur (entrez numéro du vainqueur (1 ou 2), 'egalite' pour match nul, ou 'back' revenir en arrière) : ")
-                if winner.lower() == 'egalite':
+                if winner.lower() == 'egalite' :
                     match.winner = None
                     self.end_match(match, None)
                     break
@@ -143,110 +143,57 @@ class RoundController:
             match_results.append(match_result)
         return match_results
 
-    """ fonction pour creer les matchs pour 1 round  """
+    
     def create_matches(self, players, round_number):
+
         matches =[]
-
-
+        # verif si le nombre de joueur est impair
         if len(self.tournament_controller.current_tournament.players) % 2 != 0:   
             print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
             return []
+        
+        # parcourt les joueurs par incréments de 2 a chaque itération et commence par indice 0
+        for i in range(0, len(players) - 1, 2):
+            # selectionne joueur2
+            match_player2 = players[i+1]
+            stop = False
+            # indice j joueur actuel +1 pour chercher joueur suivant
+            j = i+1
+            print(f" l 162 - joueur 1 {players[i]['first_name']} ")
 
-        for i in range(0, len(players)):
-            players[i]['selected'] = False
-
-        for i in range(0, len(players) ):
-            print(f" {i} tour de boucle *--*---*------*-------*******----*--***-")
-            if players[i]['selected']:
-                print(f" l 174 - joueur deja en match {players[i]['first_name']} ")
-                continue
-            else:
-                print(f"l 177 - joueur libre {players[i]['first_name']} devient player1 {players[i]['national_chess_id']}")
-                player1 = players[i]
-                players[i]['selected'] = True
-                print(f"\n l 181 avant if - valeur de i : {i} ")
-                print(f"l 181 avant if - valeur de i +1 : {i+1} ")
-                print(f"l 181 avant if - valeur de ilen(players) : {len(players)} \n")
-
-                if i+1 < len(players):
-                    print(f"l 181 - i+1 est possible {players[i+1]['first_name']}")
-                    print(f"{players[i+1]['selected']} {players[i+1]['played_with']} l 183")
-                    if players[i+1]['selected'] == False and player1['national_chess_id'] not in players[i+1]['played_with']:
-                        print(f"  l 183  {players[i+1]['first_name']} est dispo et n'a pas joué contre j1")
-                        player2 = players[i+1]
-                        players[i+1]['selected'] = True
-                        match = self.add_match(player1, player2, "white", "black", round_number)
-                        matches.append(match)
-                        print(f"match ajouté avec {players[i]['first_name']}, {players[i+1]['first_name']}")
-                        continue
-                    else:
-                        print(f"l 193 joeur pas dispo ou deja jouer contre on y retourne")
-                        for k in range(0, len(players)):
-                            print(f" {k} l 194 tour de boucle +++++++--+---+++-----++++++- ")
-                            print(f"\n{players[i]['first_name']}  - {players[i]['national_chess_id']} - {players[i]['selected']} - {players[i]['played_with']}  l 200 \n")
-                            print(f"{players[k]['first_name']}  - {players[k]['national_chess_id']} - {players[k]['selected']} - {players[k]['played_with']}  l 200 \n")
-
-                            if players[k]['selected']  or players[k]['national_chess_id'] == player1['national_chess_id'] or player1['national_chess_id'] in players[k]['played_with']:
-                                print(f" l 194 {players[k]['first_name']} est deja en match ou j2=j1 ou j1 deja avec j2")
-                                continue
-                            else:
-                                print(f" l 197 {players[k]['first_name']} devient j2 et c'est parti")
-                                player2 = players[k]
-                                player2['selected'] = True
-                                match = self.add_match(player1, player2, "white", "black", round_number)
-                                matches.append(match)
-                                break
+            
+            while not stop:
+                # verif si joueur1 n'a pas deja joué ensemble ou si player2 est different de player 1
+                if players[i]['national_chess_id'] not in match_player2['played_with'] and match_player2['national_chess_id'] != players[i]['national_chess_id']:
+                    print(f"while_if l 168")
+                    print(f"l 169 - i+1 est possible {match_player2['first_name']}")
+                    # true quand paire valide - stop boucle
+                    stop = True
+                # pair non valide
                 else:
-                    print(" on est au elseeeeeeeeeeuuuuhhhhhh l 215 ")
-                    for k in range(0, len(players)):
-                            if players[k]['selected']  or players[k]['national_chess_id'] == player1['national_chess_id'] or player1['national_chess_id'] in players[k]['played_with']:
-                                continue
-                            else:
-                                print(" je suis rentrééééééééé dans le dernier elseeeeuuuhhhh l 219")
-                                player2 = players[k]
-                                player2['selected'] = True
-                                match = self.add_match(player1, player2, "white", "black", round_number)
-                                matches.append(match)
-                                break
+                    # Incrémenter j 
+                    j += 1
+                    print("change de joueur l 176")
+                    print(f"match deja fait  entre {players[i]['first_name']}, {match_player2['first_name']}")
+                    # verif si j depasse de la liste
+                    if j >= len(players):
+                        #revien en debut de liste 
+                        j = 0
+                        match_player2 = players[0]
+                        print(" j sup a la liste l 172 ")
+                        print(f" l 184 {players[j]['first_name']} j2 depasse liste et revient a 0")
+                    else:
+                        # j est dans la liste
+                        match_player2 = players[j]
+                        print(f" l 188 {players[j]['first_name']} j2 dans la liste")
+                        print("j dans la liste l 189")
+
+            print("l 191 while finiiiiiii")
+        
+            # print(f"l168 juste avant add match {match_player2['national_chess_id']}")
+            match = self.add_match(players[i], match_player2, "white", "black", round_number)
+            matches.append(match)
         return matches
-
-        
-
-        #     match_player2 = players[i+1]
-        #     # print(f"id du joueur 2 avant if {match_player2['national_chess_id']}")
-        #     print(f" valeur de i {i} l 156")
-        #     stop = False
-        #     j = i+1
-        #     # verif si player1 et player 2 ont deja joué ou non ensemble
-        #     while not stop:
-                
-        #         if players[i]['national_chess_id'] not in match_player2['played_with'] and match_player2['national_chess_id'] != players[i]['national_chess_id']:
-        #             print(f"while_if l 162")
-        #             # Sélection d'un nouveau joueur pour match_player2
-        #             if  j < len(players):
-        #                 print(" pouet if l 164 while_if_if")
-        #                 match_player2 = players[j]
-                        
-        #             else:
-        #                 print("pouet else l 168 while_if_else")
-        #                 # Revenir au début de la liste des joueurs
-        #                 match_player2 = players[0]
-
-        #             stop =True
-        #         if j < len(players):
-        #             print(" while_if l176")
-        #             j = j+1  
-        #         else:
-        #             print(" while_else l 179")
-        #             j=0
-
-        #         print("l 176 while finiiiiiii")
-        
-        #     # print(f"l168 juste avant add match {match_player2['national_chess_id']}")
-        #     match = self.add_match(players[i], match_player2, "white", "black", round_number)
-        #     matches.append(match)
-        # return matches
-    
     
     def match_exists(self, player1, player2):
         # verif si le match a deja été joué

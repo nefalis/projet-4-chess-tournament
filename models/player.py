@@ -8,6 +8,7 @@ class Player:
         self.birthday = birthday
         self.score = score
         self.played_with = []
+        self.selected = False
         
 
 
