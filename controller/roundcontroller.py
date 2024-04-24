@@ -145,30 +145,46 @@ class RoundController:
 
     
     def create_matches(self, players, round_number):
-
-        matches =[]
         # verif si le nombre de joueur est impair
         if len(self.tournament_controller.current_tournament.players) % 2 != 0:   
             print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
             return []
         
+        matches = []
+        nb_matches = len(players)/2
+    
+        for i in range(0, len(players)):
+            players[i]['selected'] = False
+
         # parcourt les joueurs par incréments de 2 a chaque itération et commence par indice 0
-        for i in range(0, len(players) - 1, 2):
-            # selectionne joueur2
-            match_player2 = players[i+1]
-            stop = False
+        for i in range(0, len(players)):
+            if players[i]['selected'] : continue
+
             # indice j joueur actuel +1 pour chercher joueur suivant
             j = i+1
+            if j > len(players) - 1:
+                j = 0
             print(f" l 162 - joueur 1 {players[i]['first_name']} ")
 
-            
-            while not stop:
+            # selectionne joueur2
+            match_player2 = players[j]
+            stop = False
+            cpt = 0
+
+            while not stop :
+                cpt +=1 
+                if cpt > len(players) :
+                    pass
+
                 # verif si joueur1 n'a pas deja joué ensemble ou si player2 est different de player 1
-                if players[i]['national_chess_id'] not in match_player2['played_with'] and match_player2['national_chess_id'] != players[i]['national_chess_id']:
+                if (not players[i]['national_chess_id'] in match_player2['played_with'] or len(matches) >= nb_matches -1 ) and match_player2['national_chess_id'] != players[i]['national_chess_id'] and not match_player2['selected']:
                     print(f"while_if l 168")
                     print(f"l 169 - i+1 est possible {match_player2['first_name']}")
+                    match_player2['selected'] = True
+                    players[i]['selected'] = True
                     # true quand paire valide - stop boucle
                     stop = True
+
                 # pair non valide
                 else:
                     # Incrémenter j 

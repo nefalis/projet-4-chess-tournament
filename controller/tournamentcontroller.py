@@ -137,6 +137,7 @@ class TournamentController:
         self.round_info[round_number] = round_info
 
     def get_round_info(self):
+        print("pouezt info l 140 tc")
         return self.round_info
     
     """ fonction pour afficher la liste des tournois """

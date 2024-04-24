@@ -19,10 +19,11 @@ class TournamentView:
         town_tournament = input("Entrez le nom de la ville : ")
         date_start = input("Entrez la date de début du tournoi : ")
         date_finish = input("Entrez la date de fin du tournoi : ")
+        number_round = input("Entrez le nombre de round  : ")
         number_player = input("Entrez le nombre de joueur qui participe : ")
         description_tournament = input("Entrez une description du tournoi du tournoi : ")
 
-        tournament_controller.create_tournament(name_tournament, town_tournament, date_start, date_finish, number_player, description_tournament, description_tournament)
+        tournament_controller.create_tournament(name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament)
 
         # Affichage des joueurs disponibles
         print("Liste des joueurs disponibles :")

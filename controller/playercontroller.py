@@ -1,15 +1,8 @@
-"""
-C create
-R read
-U uptdate
-D delete
-"""
+
 import json
 import os
-import random
 from models.player import Player
 
-""" fonction pour creer un joueur"""
 class PlayerController:
 
     def __init__(self):
@@ -18,84 +11,83 @@ class PlayerController:
         self.load_players("./data/playersDB.json")
         self.player_id_counter = 1
 
-    """ fonction pour la création d'un joueur"""
     def create_player(self, national_chess_id, first_name, last_name, birthday, score):
+        """ Create a new player and then add to the player database. """
         player = Player(national_chess_id, first_name, last_name, birthday, score)
         self.players.append(player)
         self.update_player_json("playersDB.json")
         print("Le joueur a été crée")
         return player 
     
-    """ fonction pour creer un fichier json"""
     def create_player_json(self, filename):
+        """ Create player database from a JSON file and populate the player list. """
+        # Define the folder where the data will be stored
         data_folder = "data"
+        # Create the data folder if it doesn't exist
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
+        # Construct the full path to the JSON file
         full_path = os.path.join(data_folder, filename)
+        # Check if the JSON file exists
         if os.path.exists(full_path):
+            # If it exists, load the player data from the file
             with open(full_path, 'r') as f:
                 players_data = json.load(f)
                 self.players = [Player(**player_data) for player_data in players_data] 
-            
-    """ fonction pour mettre a jour le fichier json """
-    def update_player_json(self, filename):
-        data_folder = "data"
-        if not os.path.exists(data_folder):
-            os.makedirs(data_folder)
-        full_path = os.path.join(data_folder, filename)
-        with open(full_path, "w", encoding="utf-8") as json_file:
-            json.dump([player.__dict__ for player in self.players], json_file, indent=4, ensure_ascii=False)
 
-    """ fonction pour charger les joueurs"""
     def load_players(self, filename):
-        try:
-            with open(filename, 'r') as file:
-                players_data = json.load(file)
-                self.players = [Player(player_data["national_chess_id"], player_data["first_name"], player_data["last_name"], player_data["birthday"], int(player_data["score"])) for player_data in players_data]
-        except FileNotFoundError:
-            print(f"Le fichier {filename} n'a pas été trouvé")
-        except json.JSONDecodeError:
-            print(f"Erreur lors du décodage du fichier JSON {filename}")
+            """ Load player data from a JSON file """
+            try:
+                # Attempt to open the specified JSON file for reading
+                with open(filename, 'r') as file:
+                    players_data = json.load(file)
+                    # Extract the player attribute from the data and create Player objects
+                    self.players = [Player(player_data["national_chess_id"], 
+                                        player_data["first_name"],
+                                        player_data["last_name"], 
+                                        player_data["birthday"], 
+                                        int(player_data["score"])) 
+                                        for player_data in players_data]
+            except FileNotFoundError:
+                print(f"Le fichier {filename} n'a pas été trouvé")
+            except json.JSONDecodeError:
+                print(f"Erreur lors du décodage du fichier JSON {filename}")
 
-    """ fonction pour avoir les joueurs"""
-    def get_players(self):
-        return self.players
-
-    """ fonction pour afficher la liste des joueurs"""
     def display_players(self):
+        """ Display the list of players. """
         print("Liste des joueurs :")
         for player in self.players:
-            print(f"{player.first_name} {player.last_name}")          
+            print(f"{player.first_name} {player.last_name}") 
+            
+    def update_player_json(self, filename):
+        """ Update player data JSON file with current player information. """
+        data_folder = "data"
+        # Create the data folder if it doesn't exist
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+        # Construct the full path to the JSON file
+        full_path = os.path.join(data_folder, filename)
+        # write player data to the JSON file
+        with open(full_path, "w", encoding="utf-8") as json_file:
+            # Serialize player objects into dictionnaries and write to the JSON file
+            json.dump([player.__dict__ for player in self.players], json_file, indent=4, ensure_ascii=False)
 
-    """ pour rechercher un joueur specifique afin de modifier des informations"""
+    def get_players(self):
+        """ Retrieve the list of players. """
+        return self.players
+
     def get_player_by_name(self, first_name, last_name):
+        """ Retrieve a player by their first name and the last name. """
         for player in self.players:
             if player.first_name == first_name and player.last_name == last_name:
                 return player
         return None
     
-    """ fonction pour enlever un joueur"""
     def remove_player(self, player):
+        """ Remove a player from the list. """
         if player in self.players:
             self.players.remove(player)
             self.update_player_json("playersDB.json")
             print(f"Le joueur {player.first_name} {player.last_name} a été supprimé.")
         else:
             print("Le joueur spécifié n'existe pas dans la liste des joueurs")
-
-
-    # """ pour mettre a jour les points"""
-    # def update_points(self, player, points):
-    #     player.score += points
-    #     print("l77 player control - up point")
-
-
-# # liste de joueur
-# controller.create_player("Pouet Pouet", "Camembert", "16/06/2000", 1),
-# controller.create_player("Nuut", "Ella", "05/06/2000", 1),
-# controller.create_player("Remi", "Fasol", "14/10/2000", 1),
-# controller.create_player("Tim", "Faitchier", "03/02/2001", 1),
-# controller.create_player("Harry", "Cover", "29/05/2001", 1),
-# controller.create_player("Emma", "Carena", "29/04/2001", 1),
-# controller.create_player("Laura", "Tatouille", "04/04/2000", 1),
-# controller.create_player("Claire", "Voyance", "12/08/2000", 1)
