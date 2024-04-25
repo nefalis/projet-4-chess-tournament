@@ -54,12 +54,36 @@ Installer les modules nécessaires :
 ``` 
 pip3 -r requirements.txt
  ```
+### Création de l'environnement virtuel
+``` 
+python -m venv env
+ ```
+### Installation de la librairie Rich
+Permet de mettre des couleurs dans le terminal et de faire les tableaux des rapports
+``` 
+pip install rich
+ ```
 
 ### Exécution
 Veuillez exécuter le fichier `main.py` avec la commande suivante :
 ``` 
 python main.py
 ```
+
+## Génération rapport Flake8
+
+### Installation de Flake8
+
+``` 
+pip intall flake8-html
+ ```
+
+ ### Génération du dossier contenant le rapport
+Le rapport sera généré dans le dossier Flake8
+
+``` 
+flake8 --format=html --htmldir=flake-report
+ ```
 
 
 
