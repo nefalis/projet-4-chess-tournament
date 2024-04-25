@@ -1,12 +1,14 @@
 from controller.playercontroller import PlayerController
 from rich import print
+
+
 class TournamentView:
     def __init__(self):
         self.player_controller = PlayerController()
 
-    """ fonction pour creer le menu tournoi """
     def display_menu_tournament(tournament_controller):
-        print(f"\n[cyan]-- Menu tournoi --[/cyan]\n")
+        """ Display the tournament menu options. """
+        print("\n[cyan]-- Menu tournoi --[/cyan]\n")
         print("1. Ajouter un tournoi")
         print("2. Voir la liste des tournois")
         print("3. Commencer un tournoi")
@@ -23,7 +25,13 @@ class TournamentView:
         number_player = input("Entrez le nombre de joueur qui participe : ")
         description_tournament = input("Entrez une description du tournoi du tournoi : ")
 
-        tournament_controller.create_tournament(name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament)
+        tournament_controller.create_tournament(name_tournament,
+                                                town_tournament,
+                                                date_start,
+                                                date_finish,
+                                                number_round,
+                                                number_player,
+                                                description_tournament)
 
         # Affichage des joueurs disponibles
         print("Liste des joueurs disponibles :")

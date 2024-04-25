@@ -1,7 +1,7 @@
-
 import json
 import os
 from models.player import Player
+
 
 class PlayerController:
 
@@ -17,8 +17,8 @@ class PlayerController:
         self.players.append(player)
         self.update_player_json("playersDB.json")
         print("Le joueur a été crée")
-        return player 
-    
+        return player
+
     def create_player_json(self, filename):
         """ Create player database from a JSON file and populate the player list. """
         # Define the folder where the data will be stored
@@ -33,32 +33,36 @@ class PlayerController:
             # If it exists, load the player data from the file
             with open(full_path, 'r') as f:
                 players_data = json.load(f)
-                self.players = [Player(**player_data) for player_data in players_data] 
+                self.players = [Player(**player_data) for player_data in players_data]
 
     def load_players(self, filename):
-            """ Load player data from a JSON file """
-            try:
-                # Attempt to open the specified JSON file for reading
-                with open(filename, 'r') as file:
-                    players_data = json.load(file)
-                    # Extract the player attribute from the data and create Player objects
-                    self.players = [Player(player_data["national_chess_id"], 
-                                        player_data["first_name"],
-                                        player_data["last_name"], 
-                                        player_data["birthday"], 
-                                        int(player_data["score"])) 
-                                        for player_data in players_data]
-            except FileNotFoundError:
-                print(f"Le fichier {filename} n'a pas été trouvé")
-            except json.JSONDecodeError:
-                print(f"Erreur lors du décodage du fichier JSON {filename}")
+        """ Load player data from a JSON file """
+        try:
+            # Attempt to open the specified JSON file for reading
+            with open(filename, 'r') as file:
+                players_data = json.load(file)
+                # Extract the player attribute from the data and create Player objects
+                self.players = [
+                    Player(
+                        player_data["national_chess_id"],
+                        player_data["first_name"],
+                        player_data["last_name"],
+                        player_data["birthday"],
+                        int(player_data["score"])
+                    )
+                    for player_data in players_data
+                ]
+        except FileNotFoundError:
+            print(f"Le fichier {filename} n'a pas été trouvé")
+        except json.JSONDecodeError:
+            print(f"Erreur lors du décodage du fichier JSON {filename}")
 
     def display_players(self):
         """ Display the list of players. """
         print("Liste des joueurs :")
         for player in self.players:
-            print(f"{player.first_name} {player.last_name}") 
-            
+            print(f"{player.first_name} {player.last_name}")
+
     def update_player_json(self, filename):
         """ Update player data JSON file with current player information. """
         data_folder = "data"
@@ -82,7 +86,7 @@ class PlayerController:
             if player.first_name == first_name and player.last_name == last_name:
                 return player
         return None
-    
+
     def remove_player(self, player):
         """ Remove a player from the list. """
         if player in self.players:

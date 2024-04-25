@@ -7,8 +7,7 @@ from controller.playercontroller import PlayerController
 from view.tournamentview import TournamentView
 from models.tournament import Tournament
 from rich import print
-import random
-from pprint import pprint
+
 
 class TournamentController:
     def __init__(self):
@@ -21,97 +20,169 @@ class TournamentController:
         self.current_round_number = 0
         self.round_info = {}
 
-    """ fonction pour creer un tournois"""
-    def create_tournament(self, name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament):
-        new_tournament = Tournament(name_tournament, town_tournament, date_start, date_finish, number_round, number_player, description_tournament, players=[])
-        # Assigner le nouveau tournoi à la variable current_tournament
-        self.current_tournament = new_tournament  
-        # Ajoutez le nouveau tournoi à la liste
+    def create_tournament(self, name_tournament, town_tournament, date_start, date_finish,
+                          number_round, number_player, description_tournament):
+        """ Create a new tournament and then add to the tournament database. """
+        new_tournament = Tournament(name_tournament,
+                                    town_tournament,
+                                    date_start,
+                                    date_finish,
+                                    number_round,
+                                    number_player,
+                                    description_tournament,
+                                    players=[])
+        # Assign the new tournament to the variable current_tournament
+        self.current_tournament = new_tournament
+        # Add the new tournament to the list of tournaments
         self.tournaments.append(new_tournament)
-        self.update_tournament_json("tournamentDB.json")  
+        self.update_tournament_json("tournamentDB.json")
         return new_tournament
-    
-    """ fonction pour creer un fichier json"""
+
     def create_tournament_json(self, filename):
+        """ Create tournament database from a JSON file  """
         data_folder = "data"
+        # Create the data folder if it doesn't exist
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
+        # Construct the full path to the JSON file
         full_path = os.path.join(data_folder, filename)
+        # Check if the JSON file exists
         if os.path.exists(full_path):
+            # If it exists, load the player data from the file
             with open(full_path, 'r') as f:
                 tournaments_data = json.load(f)
                 self.tournaments = [Tournament(**tournament_data) for tournament_data in tournaments_data]
 
-    """ fonction pour mettre a jour le fichier json """
     def update_tournament_json(self, filename):
+        """ Update a JSON file with tournament data. """
         data_folder = "data"
+        # Create the data folder if it doesn't exist
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
-        full_path = os.path.join(data_folder, filename)    
-        # Récupérez les données du tournoi
+        # Construct the full path to the JSON file
+        full_path = os.path.join(data_folder, filename)
         tournaments_data = [tournament.__dict__ for tournament in self.tournaments]
-        # Écrivez les données dans le fichier JSON
+        # write player data to the JSON file
         with open(full_path, "w", encoding="utf-8") as json_file:
             json.dump(tournaments_data, json_file, indent=4, ensure_ascii=False, default=str)
 
-    """ fonction pour charger un tournois"""
+    def update_rounds_and_matches_json(self, filename):
+        """ Update the JSON file with round and match information. """
+        data_folder = "data"
+        # Create the data folder if it doesn't exist
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+        # Construct the full path to the JSON file
+        full_path = os.path.join(data_folder, filename)
+        # Prepare data to be written to JSON file
+        tournament_data = {
+            "tournament_name": self.current_tournament.name_tournament,
+            "rounds": [],
+            "matches": []
+        }
+        # Add round information
+        for round_number, round_info in self.round_info.items():
+            # Iterate over matches in the round
+            for match_info in round_info["matches"]:
+                match_data = {
+                    "round_number": round_number,
+                    "player1": {
+                        "first_name": match_info["player1"]["first_name"],
+                        "last_name": match_info["player1"]["last_name"]
+                    },
+                    "player2": {
+                        "first_name": match_info["player2"]["first_name"],
+                        "last_name": match_info["player2"]["last_name"]
+                    }
+                 }
+                if match_info["winner"]:
+                    match_data["winner"] = {
+                        "first_name": match_info["winner"]["first_name"],
+                        "last_name": match_info["winner"]["last_name"]
+                    }
+                    tournament_data["matches"].append(match_data)
+        # Write data to JSON file
+        with open(full_path, "w", encoding="utf-8") as json_file:
+            json.dump(tournament_data, json_file, indent=4, ensure_ascii=False, default=str)
+
     def load_tournament(self, filename):
+        """ Load tournament data from a JSON file. """
         try:
             with open(filename, 'r') as file:
+                # Load tournament data from the file
                 tournaments_data = json.load(file)
-                self.tournaments = [Tournament(tournament_data["name_tournament"], tournament_data["town_tournament"], tournament_data["date_start"], tournament_data["date_finish"], tournament_data["number_round"], tournament_data["number_player"], tournament_data["description_tournament"], tournament_data["players"]) for tournament_data in tournaments_data]
+                self.tournaments = [
+                    Tournament(
+                        tournament_data["name_tournament"],
+                        tournament_data["town_tournament"],
+                        tournament_data["date_start"],
+                        tournament_data["date_finish"],
+                        tournament_data["number_round"],
+                        tournament_data["number_player"],
+                        tournament_data["description_tournament"],
+                        tournament_data["players"]
+                    )
+                    for tournament_data in tournaments_data
+                ]
         except FileNotFoundError:
             print(f"Le fichier {filename} n'a pas été trouvé")
         except json.JSONDecodeError:
             print(f"Erreur lors du décodage du fichier JSON {filename}")
-    
-    """ fonction pour ajouter des joueurs au tournois"""
+
     def add_player_tournament(self, selected_players):
+        """ Add players to the current tournament. """
         if self.current_tournament is None:
             print("Aucun tournoi en cours")
             return
+        # Add each selected player to the current tournament
         for player in (selected_players):
             self.current_tournament.add_player(player)
 
-    """ fonction pour commencer un tournois"""
     def start_tournament(self):
+        """
+        Start a tournament.
+        This function selects a tournament, starts its rounds, and updates the tournament JSON file.
+        """
+        # Select a tournament to start
         tournament = TournamentView.select_tournament(self)
         print(f"\n[blue] Vous allez commencer le tournoi {tournament.name_tournament}[/blue]\n")
+        # Check if a tournament is selected
         if tournament is None:
             print("Aucun tournoi sélectionné")
             return
         print(f"Heure du début: {datetime.now()}")
+        # Set the current tournament
         self.current_tournament = tournament
+        # Get players for the tournament
         self.current_tournament.players = self.get_tournament_players()
         round_number = 1
 
+        # Start rounds
         while round_number <= 4:
-            # Commencer un nouveau round
+            # Start a new round
             self.match_controller.start_round(round_number)
-            # Enregistrer les résultats du round
-            # self.match_controller.record_match_results(round_number, matches)
-            # self.match_controller.get_match_result()
-            # Incrémenter le compteur de rounds
+            # Increment the round count
             self.round_count += 1
-            # Passer au round suivant
+            # Move to the next round
             round_number += 1
 
-        # Une fois que tous les rounds sont terminés, finir le tournoi
-        # end_time = datetime.now()
-        # tournament.end_time = end_time
-        self.end_tournament()   
-
+        # Finish the tournament once all rounds are completed
+        self.end_tournament()
+        # Update the tournament JSON file
         self.update_tournament_json("tournamentDB.json")
-        
-    """ fonction pour donner le score final des joueurs a la fin du tournoi """
+        # Update the JSON file with round and match information
+        self.update_rounds_and_matches_json(f"{tournament.name_tournament} {tournament.date_start}.json")
+
     def end_score_player(self):
+        """ Calculate the final scores of players at the end of the tournament. """
         player_scores = {}
-        # Parcourir les tournois pour récupérer les données des joueurs
+        # Iterate through the players of the current tournament to retrieve their data
         for player_data in self.current_tournament.players:
-            # Vérifier si player_data est un dictionnaire
+            # Check if player_data is a dictionary
             if isinstance(player_data, dict):
                 player_name = f"{player_data['first_name']} {player_data['last_name']}"
                 player_score = player_data['score']
+                # Update the player's score in the player_scores dictionary
                 if player_name in player_scores:
                     player_scores[player_name] += player_score
                 else:
@@ -119,111 +190,81 @@ class TournamentController:
             else:
                 print("Erreur: player_data n'est pas un dictionnaire.")
         return player_scores
-    
-    """ fonction pour voir les joueurs du tournoi """
+
     def get_tournament_players(self):
+        """ Get the players of the current tournament. """
         tournament_players = self.current_tournament.players
-   
         return tournament_players
-    
-    """ fonction pour avoir les tournois"""
+
     def get_tournaments(tournament_controller):
-        print("tc l118 get tournament")
+        """ Get the list of tournaments. """
         print(tournament_controller.tournaments)
         return tournament_controller.tournaments
-    
-    """ fonction pour enregistrer les information des rounds """
+
     def update_round_info(self, round_number, round_info):
+        """ This function updates the information of a specific round. """
         self.round_info[round_number] = round_info
 
     def get_round_info(self):
-        print("pouezt info l 140 tc")
+        """ This function retrieves the information of all rounds. """
         return self.round_info
-    
-    """ fonction pour afficher la liste des tournois """
+
     def display_tournament(tournament_controller):
+        """ Display the list of tournaments. """
         print("Liste des tournois : ")
         for tournament in tournament_controller.tournaments:
             print(f"{tournament.name_tournament} {tournament.date_start}")
-    
-    """ fonction pour choisir des joueurs aléatoire """
-    def choose_random_players(self):
-        if len(self.current_tournament.players) % 2 != 0:   
-            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
-            return []
-        random_players = random.sample(self.current_tournament.players, len(self.current_tournament.players))
-        return random_players
 
+    # """ fonction pour choisir des joueurs aléatoire """
+    # def choose_random_players(self):
+    #     if len(self.current_tournament.players) % 2 != 0:
+    #         print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+    #         return []
+    #     random_players = random.sample(self.current_tournament.players, len(self.current_tournament.players))
+    #     return random_players
 
-    """ fonction pour finir le tournois """
     def end_tournament(self):
+        """ This function concludes the tournament by displaying the player rankings and determining the winner. """
         winner_name = None
         winner_score = None
 
         if self.match_controller.check_round_complete(self.match_controller.current_round_number):
             player_scores = self.end_score_player()
             if player_scores:
-                # Trier les joueurs par score (le plus haut d'abord)
+                # Sort players by score (highest first)
                 sorted_players = sorted(player_scores.items(), key=lambda x: x[1], reverse=True)
-                # Afficher le classement des joueurs
-                print(f"\n[green]Classement des joueurs:[/green]")
+                # Display player rankings
+                print("\n[green]Classement des joueurs:[/green]")
                 for rank, (player_name, score) in enumerate(sorted_players, start=1):
                     print(f"{rank}. {player_name} - Score: {score} points")
-                # Déterminer le vainqueur
+                # Determine the winner
                 winner_name, winner_score = sorted_players[0] if sorted_players else (None, None)
                 if winner_name:
-                    # Afficher le vainqueur
-                    print(f"\n[yellow]Le vainqueur du tournoi est : {winner_name} avec un score de {winner_score} points[/yellow]")
+                    # Display the winner
+                    print(f"\n[yellow]Le vainqueur du tournoi est : {winner_name} avec un score de "
+                          f"{winner_score} points[/yellow]")
             else:
                 print("Aucun joueur n'a participé au tournoi ou n'a marqué de points.")
         else:
-            print("Le tournoi ne peut pas être terminé car tous les rounds n'ont pas été joués") 
+            print("Le tournoi ne peut pas être terminé car tous les rounds n'ont pas été joués")
 
         # Terminer le tournoi en définissant la date et l'heure de fin
         # end_time = datetime.now()
         # print(f"\n[blue]Le tournoi est terminé.[/blue]")
         # print(f"[blue]Date et heure de fin : {end_time}[/blue]\n")
 
-    """ pour rechercher un tournoi specifique"""
     def get_tournament_by_name(self, name_tournament, date_start):
+        """ Retrieve a specific tournament by its name and start date. """
         for tournament in self.tournaments:
             if tournament.name_tournament == name_tournament and tournament.date_start == date_start:
                 return tournament
         return None
 
-
     """ fonction pour supprimer un tournois"""
     def remove_tournament(self, tournament):
+        """ Remove a tournament from the list of tournaments. """
         if tournament in self.tournaments:
             self.tournaments.remove(tournament)
             print(f"Le tournoi {tournament.name_tournament} a été supprimé")
         else:
             print("Le tournoi spécifié n'existe pas dans la liste des tournois")
-
-    
-   
-            
-        # """ fonction pour verifer que tout les round ont été fait """
-    # def check_round_complete(self):
-    #     played_round = set()
-    #     for match in self.match_controller.matches:
-    #         played_round.add(match.round_number)
-    #     return len(played_round) == 4
-
-        # """ fonction pour démarrer un tournois"""
-    # def start_round(self):
-    #     print(f"Round 1 {datetime.now}")
-    #     all_players = self.player_controller.get_players()
-    #     print("l73 tc all_player")
-    #     if len(all_players) < 8:
-    #         print("Il n'y a pas assez de joueurs pour commencer un tour")
-    #         return
-    #     # Choisissez 8 joueurs aléatoires pour le round
-    #     round_players = random.sample(all_players, 8)
-    #     random.shuffle(round_players)
-    #     # Creation des matchs du round
-    #     matches = self.match_controller.create_matches(round_players)
-    #     # Afficher les paires de joueurs
-    #     self.match_controller.display_matches(matches)
-        
-

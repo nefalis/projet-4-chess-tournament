@@ -1,20 +1,18 @@
-
 from view.view import main_player_view
 from view.view import main_tournament_view
 from view.view import main_report_view
 from rich import print
 
+
 def main_menu():
 
     while True:
-        print(f"\n[cyan]-- Menu navigation -- [/cyan]\n")
+        print('\n[cyan]-- Menu navigation -- [/cyan]\n')
         print("1. Menu joueur")
         print("2. Menu tournoi")
         print("3. Menu rapport")
-        # print("4. Sortir un rapport")
 
         choice = input("Choisissez une option : ")
-
         if choice == '1':
             main_player_view()
         elif choice == '2':

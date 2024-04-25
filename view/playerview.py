@@ -1,9 +1,11 @@
 
 from rich import print
+
+
 class PlayerView:
     """ fonction pour creer le menu joueur"""
     def display_menu_player(player_controller):
-        print(f"[cyan]-- Menu Joueur -- [/cyan]\n")
+        print("[cyan]-- Menu Joueur -- [/cyan]\n")
         print("1. Créer un joueur")
         print("2. Afficher tous les joueurs")
         print("3. Supprimer un joueur")
@@ -23,7 +25,7 @@ class PlayerView:
     def delete_players(player_controller):
         print("Liste des joueurs :")
         for player in player_controller.players:
-            print(f"{player.first_name} {player.last_name}")  
+            print(f"{player.first_name} {player.last_name}")
         print("Veuillez renseigner le prénom et nom du joueur a supprimer")
         first_name = input("Entrez le prénom du joueur : ")
         last_name = input("Entrez le nom du joueur : ")

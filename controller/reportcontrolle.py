@@ -25,7 +25,7 @@ class ReportController:
         table.add_column("Date de naissance", justify="left", style="green")
         table.add_column("National chess id", justify="left", style="blue")
         for player in players_sorted:
-            table.add_row(player.first_name,player.last_name, str(player.birthday), str(player.national_chess_id))
+            table.add_row(player.first_name, player.last_name, str(player.birthday), str(player.national_chess_id))
         print(table)
 
     def display_all_tournament(self):
@@ -42,13 +42,18 @@ class ReportController:
             table.add_column("Date de fin", justify="left", style="green")
             table.add_column("Ville du tournoi", justify="left", style="blue")
             for tournament in tournament_sorted:
-                table.add_row(tournament.name_tournament, str(tournament.date_start), str(tournament.date_finish), tournament.town_tournament)
+                table.add_row(
+                    tournament.name_tournament,
+                    str(tournament.date_start),
+                    str(tournament.date_finish),
+                    tournament.town_tournament
+                )
             print(table)
         else:
             print("Aucun tournoi n'est disponible pour affichage.")
 
     def display_tournament_date_report(self):
-        """ Display the dates of a tournament. """   
+        """ Display the dates of a tournament. """
         # Select a tournament
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
         if selected_tournament is None:
@@ -60,10 +65,12 @@ class ReportController:
         table_tournament_info.add_column("Date de début", style="orange_red1")
         table_tournament_info.add_column("Date de fin", style="green")
         table_tournament_info.add_column("Ville du tournoi", style="blue")
-        table_tournament_info.add_row(selected_tournament.name_tournament,
-                                        str(selected_tournament.date_start),
-                                        str(selected_tournament.date_finish),
-                                        selected_tournament.town_tournament)
+        table_tournament_info.add_row(
+            selected_tournament.name_tournament,
+            str(selected_tournament.date_start),
+            str(selected_tournament.date_finish),
+            selected_tournament.town_tournament
+        )
         print(table_tournament_info)
 
     def display_tournament_player_report(self):
@@ -73,7 +80,7 @@ class ReportController:
         if selected_tournament is None:
             print("Aucun tournoi sélectionné.")
             return
-        # Get the players of the selected tournament    
+        # Get the players of the selected tournament
         tournament_players = selected_tournament.players
         print(selected_tournament.players)
         if not tournament_players:
@@ -88,7 +95,6 @@ class ReportController:
         table.add_column("Score", justify="left", style="green")
         for player in players_sorted:
             table.add_row(player["first_name"], player["last_name"], str(player["score"]))
-            
         print(table)
 
     """ fonction pour afficher les détails d'un tournoi"""
@@ -97,9 +103,7 @@ class ReportController:
         if selected_tournament is None:
             print("Aucun tournoi sélectionné.")
             return
-        print("l 100")
-        print(self.tournament_controller.round_info)
-        
+
         # Créer un tableau pour afficher les informations du tournoi
         table_tournament_info = Table(title=f"Informations sur le tournoi {selected_tournament.name_tournament}")
         table_tournament_info.add_column("Nom", style="cyan")
@@ -107,31 +111,29 @@ class ReportController:
         table_tournament_info.add_column("Date de fin", style="green")
         table_tournament_info.add_column("Ville du tournoi", style="blue")
         table_tournament_info.add_column("Nombre de round", style="light_sea_green")
-        table_tournament_info.add_row(selected_tournament.name_tournament,
-                                        str(selected_tournament.date_start),
-                                        str(selected_tournament.date_finish),
-                                        str(selected_tournament.town_tournament),
-                                        selected_tournament.number_round)
-        
-
-        # Tableau pour afficher les détails des rounds
-        table_round_details = Table(title="Détails des rounds")
-        table_round_details.add_column("Round", style="cyan")
-        table_round_details.add_column("Matches", style="green")
-
-        # Récupérer les informations sur les rounds du tournoi sélectionné
-        round_info = self.tournament_controller.get_round_info()
-        print(round_info)
-
-        for round_number, round_data in round_info.items():
-            matches = round_data["matches"]
-            match_strings = [f"Match {i+1}: {match['player1']} vs {match['player2']}" for i, match in enumerate(matches)]
-            matches_str = "\n".join(match_strings)
-            table_round_details.add_row(str(round_number), matches_str)
-
-
-
-        # Afficher les deux tableaux
+        table_tournament_info.add_row(
+            selected_tournament.name_tournament,
+            str(selected_tournament.date_start),
+            str(selected_tournament.date_finish),
+            str(selected_tournament.town_tournament),
+            selected_tournament.number_round
+            )
         print(table_tournament_info)
-        print(table_round_details)
-        
+
+        # Afficher les détails de chaque round dans un tableau séparé
+        print("\nDétails des rounds :")
+        for round_number, round_info in self.tournament_controller.round_info():
+            table_round_info = Table(title=f"Détails du round {round_number}")
+            table_round_info.add_column("Match", style="cyan")
+            table_round_info.add_column("Gagnant", style="green")
+            table_round_info.add_column("Joueur 1", style="orange_red1")
+            table_round_info.add_column("Joueur 2", style="dark_orange")
+            for match in round_info["matches"]:
+                winner = match["winner"] if match["winner"] else "Égalité"
+                table_round_info.add_row(
+                    f"Match {match['player1']['first_name']} vs {match['player2']['first_name']}",
+                    winner,
+                    f"{match['player1']['first_name']} {match['player1']['last_name']}",
+                    f"{match['player2']['first_name']} {match['player2']['last_name']}"
+                )
+            print(table_round_info)
