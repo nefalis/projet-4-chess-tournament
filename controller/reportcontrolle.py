@@ -10,6 +10,7 @@ class ReportController:
         self.tournament_controller = TournamentController()
         self.tournament_controller.load_tournament("./data/tournamentDB.json")
         self.match_controller = RoundController(tournament_controller)
+        self.round_info = {}
 
     def display_all_player(self):
         """ Display all players in alphabetical order """
@@ -105,7 +106,7 @@ class ReportController:
             return
 
         # Créer un tableau pour afficher les informations du tournoi
-        table_tournament_info = Table(title=f"Informations sur le tournoi {selected_tournament.name_tournament}")
+        table_tournament_info = Table(title=f"\n Informations sur le tournoi {selected_tournament.name_tournament}")
         table_tournament_info.add_column("Nom", style="cyan")
         table_tournament_info.add_column("Date de début", style="orange_red1")
         table_tournament_info.add_column("Date de fin", style="green")
@@ -120,20 +121,43 @@ class ReportController:
             )
         print(table_tournament_info)
 
-        # Afficher les détails de chaque round dans un tableau séparé
-        print("\nDétails des rounds :")
-        for round_number, round_info in self.tournament_controller.round_info():
-            table_round_info = Table(title=f"Détails du round {round_number}")
-            table_round_info.add_column("Match", style="cyan")
-            table_round_info.add_column("Gagnant", style="green")
-            table_round_info.add_column("Joueur 1", style="orange_red1")
-            table_round_info.add_column("Joueur 2", style="dark_orange")
-            for match in round_info["matches"]:
-                winner = match["winner"] if match["winner"] else "Égalité"
-                table_round_info.add_row(
-                    f"Match {match['player1']['first_name']} vs {match['player2']['first_name']}",
-                    winner,
-                    f"{match['player1']['first_name']} {match['player1']['last_name']}",
-                    f"{match['player2']['first_name']} {match['player2']['last_name']}"
+        # Créer un tableau pour afficher les informations score des joueurs
+        table_tournament_info_player = Table(title=f"\n Score des joueurs du tournoi ")
+        table_tournament_info_player.add_column("Prénom", style="cyan")
+        table_tournament_info_player.add_column("Nom", style="green")
+        table_tournament_info_player.add_column("Score", style="dark_sea_green")
+
+        # Trier les joueurs par score
+        sorted_players = sorted(selected_tournament.players, key=lambda x: x["score"], reverse=True)
+
+        # Parcourir chaque joueur dans la liste des joueurs du tournoi
+        for player_data in sorted_players:
+            table_tournament_info_player.add_row(
+                player_data["first_name"],
+                player_data["last_name"],
+                str(player_data["score"])
+            )
+        print(table_tournament_info_player)
+
+        winner = sorted_players[0]
+        # Afficher le nom du joueur gagnant
+        print(f"\n Le gagnant du tournoi est : [cyan]{winner['first_name']} {winner['last_name']} [/cyan] avec un score de {winner['score']} \n ")
+
+        # Afficher les détails des rounds
+        rounds_info = selected_tournament.rounds_info
+        for round_number, round_info in rounds_info.items():
+            round_table = Table(title=f"Round {round_info['round']} - Matchs")
+            round_table.add_column("Match", justify="center", style="cyan")
+            round_table.add_column("Joueur 1", style="dark_red" )
+            round_table.add_column("Joueur 2", style= "dark_goldenrod")
+            round_table.add_column("Vainqueur", style="dark_orange3")
+
+            for match_number, match in enumerate(round_info["matches"], start=1):
+                round_table.add_row(
+                    str(match_number),
+                    match["player1"],
+                    match["player2"],
+                    match["winner"]
                 )
-            print(table_round_info)
+
+            print(round_table)

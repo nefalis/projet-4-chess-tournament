@@ -2,7 +2,7 @@
 
 class Tournament:
     def __init__(self, name_tournament, town_tournament, date_start, date_finish,
-                 number_round, number_player, description_tournament, players):
+                 number_round, number_player, description_tournament, players, rounds_info):
         """ Initializes a Tournament object with the given attributes. """
         self.name_tournament = name_tournament
         self.town_tournament = town_tournament
@@ -12,6 +12,7 @@ class Tournament:
         self.number_player = number_player
         self.description_tournament = description_tournament
         self.players = players
+        self.rounds_info = rounds_info
 
     def add_player(self, player):
         """ Adds a player to the tournament. """

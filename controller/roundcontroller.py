@@ -43,8 +43,7 @@ class RoundController:
         if winner:
             winner["score"] += 1
             # Determine the loser
-            loser = match.player1 if winner != match.player1 else match.player2
-            print(f"j'ajoute 0 au perdant {loser}")
+            match.player1 if winner != match.player1 else match.player2
         else:
             # If the match is a draw, add 0.5 to each player
             for player in [match.player1, match.player2]:
@@ -99,8 +98,6 @@ class RoundController:
 
         # Update the JSON file
         self.tournament_controller.update_tournament_json("tournamentDB.json")
-        print("round info l 100 rc")
-        print(self.tournament_controller.round_info)
 
     def start_round(self, round_number):
         """
@@ -180,18 +177,12 @@ class RoundController:
             j = i+1
             if j > len(players) - 1:
                 j = 0
-            print(f" l 162 - joueur 1 {players[i]['first_name']} ")
 
             # Select player 2
             match_player2 = players[j]
             stop = False
-            cpt = 0
 
             while not stop:
-                cpt += 1
-                if cpt > len(players):
-                    pass
-
                 # Check if player1 hasn't played together or if player2 is different from player 1
                 if (
                     (not players[i]['national_chess_id'] in match_player2['played_with'] or
@@ -199,34 +190,24 @@ class RoundController:
                         match_player2['national_chess_id'] != players[i]['national_chess_id'] and
                         not match_player2['selected']
                 ):
-                    print("while_if l 168")
-                    print(f'l 169 - i+1 est possible {match_player2['first_name']}')
                     # Mark player as selected
                     match_player2['selected'] = True
                     players[i]['selected'] = True
                     # true quand paire valide - stop boucle
                     stop = True
-
                 # Pair is not valid
                 else:
                     # Increment j
                     j += 1
-                    print("change de joueur l 176")
-                    print(f"match deja fait  entre {players[i]['first_name']}, {match_player2['first_name']}")
                     # Check if j exceeds the list
                     if j >= len(players):
                         # Go back to the beginning of the list
                         j = 0
                         match_player2 = players[0]
-                        print(" j sup a la liste l 172 ")
-                        print(f" l 184 {players[j]['first_name']} j2 depasse liste et revient a 0")
                     else:
                         # j is within the list
                         match_player2 = players[j]
-                        print(f" l 188 {players[j]['first_name']} j2 dans la liste")
-                        print("j dans la liste l 189")
 
-            print("l 191 while finiiiiiii")
             # Create a match between player1 and player2
             match = self.add_match(players[i], match_player2, "white", "black", round_number)
             matches.append(match)
