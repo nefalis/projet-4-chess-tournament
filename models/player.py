@@ -9,7 +9,5 @@ class Player:
         self.selected = False
 
     def update_score(self, points):
+        """ Update the player's score """
         self.score += points
-
-    def add_id(self, id):
-        self.id = id

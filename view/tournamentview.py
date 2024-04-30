@@ -1,5 +1,6 @@
 from controller.playercontroller import PlayerController
 from rich import print
+from datetime import datetime
 
 
 class TournamentView:
@@ -16,17 +17,49 @@ class TournamentView:
         print("5. Supprimer un tournoi")
         print("6. Quitter le menu tournoi")
 
-    """ fonction pour les input de creation de tournoi """
     def create_tournament_input(tournament_controller, player_controller):
+        """ Function to create a tournament with user input. """
         name_tournament = input("Entrez le nom du tournoi : ")
         town_tournament = input("Entrez le nom de la ville : ")
-        date_start = input("Entrez la date de début du tournoi (JJ/MM/AAAA) : ")
-        date_finish = input("Entrez la date de fin du tournoi (JJ/MM/AAAA) : ")
-        number_player = input("Entrez le nombre de joueur qui participe : ")
+
+    # Prompt for start date and validate
+        while True:
+            date_start = input("Entrez la date de début du tournoi (JJ/MM/AAAA) : ")
+            try:
+                datetime.strptime(date_start, "%d/%m/%Y")
+                break
+            except ValueError:
+                print("Format de date incorrect. Veuillez entrer une date au format JJ/MM/AAAA.")
+
+        # Prompt for end date and validate
+        while True:
+            date_finish = input("Entrez la date de fin du tournoi (JJ/MM/AAAA) : ")
+            try:
+                datetime.strptime(date_finish, "%d/%m/%Y")
+                # Check if end date is after start date
+                if datetime.strptime(date_finish, "%d/%m/%Y") > datetime.strptime(date_start, "%d/%m/%Y"):
+                    break
+                else:
+                    print("La date de fin doit être après la date de début.")
+            except ValueError:
+                print("Format de date incorrect. Veuillez entrer une date au format JJ/MM/AAAA.")
+
         description_tournament = input("Entrez une description du tournoi du tournoi : ")
 
-        rounds_info = {}
+        # Ensure number of players is even and greater than 0
+        while True:
+            number_player = input("Entrez le nombre de joueurs qui participe : ")
+            try:
+                number_player = int(number_player)
+                if number_player > 0 and number_player % 2 == 0:
+                    break
+                else:
+                    print("Le nombre de joueurs doit être pair. Veuillez réessayer.")
+            except ValueError:
+                print("Veuillez entrer un nombre entier.")
 
+        # Create tournament
+        rounds_info = {}
         tournament_controller.create_tournament(name_tournament,
                                                 town_tournament,
                                                 date_start,
@@ -35,13 +68,13 @@ class TournamentView:
                                                 description_tournament,
                                                 rounds_info)
 
-        # Affichage des joueurs disponibles
+        # Display available players.
         print("Liste des joueurs disponibles :")
         players = player_controller.get_players()
         for index, player in enumerate(players, start=1):
             print(f"{index} prenom : {player.first_name} - nom : {player.last_name} score : {player.score}")
 
-        # ajout des joueurs pour le tournoi
+        # Add players to the tournament.
         num_players = int(number_player)
         selected_players = []
         for _ in range(num_players):
@@ -60,23 +93,21 @@ class TournamentView:
         tournament_controller.update_tournament_json("tournamentDB.json")
         print("Le tournoi a été créé avec succès et les joueurs ont été ajouté")
 
-    """ fonction pour selectionner un tournoi """
     def select_tournament(tournament_controller):
+        """ Function to select a tournament. """
         print("Liste des tournois : ")
         for tournament in tournament_controller.tournaments:
             print(f"{tournament.name_tournament} {tournament.date_start}")
         while True:
-            name = input("Entrez le nom du tournoi (ou tapez 'q' pour quitter) : ")
-            if name.lower() == 'q':
-                return None
+            name = input("Entrez le nom du tournoi  : ")
             date = input("Entrez la date du tournoi (format JJ/MM/AAAA) : ")
             for tournament in tournament_controller.tournaments:
                 if tournament.name_tournament == name and tournament.date_start == date:
                     return tournament
             print("Aucun tournoi trouvé avec le nom et la date spécifiés. Veuillez réessayer")
 
-    """ fonction pour supprimer un tournoi"""
     def delete_tournament(tournament_controller):
+        """ Function for remove a tournament. """
         print("Liste des tournois : ")
         for tournament in tournament_controller.tournaments:
             print(f"{tournament.name_tournament} {tournament.date_start}")

@@ -7,6 +7,7 @@ from view.reportview import ReportView
 
 
 def main_player_view():
+    """ Function to display the player management menu and handle user interactions. """
     player_controller = PlayerController()
     player_controller.create_player_json("./data/playersDB.json")
 
@@ -28,6 +29,7 @@ def main_player_view():
 
 
 def main_tournament_view():
+    """ Function to display the tournament management menu and handle user interactions. """
     tournament_controller = TournamentController()
     tournament_controller.create_tournament_json("tournamentDB.json")
     player_controller = PlayerController()
@@ -43,7 +45,7 @@ def main_tournament_view():
         elif choice == '3':
             tournament_controller.start_tournament()
         elif choice == '4':
-            tournament_controller.resume_tournament()   
+            tournament_controller.resume_tournament()
         elif choice == '5':
             TournamentView.delete_tournament(tournament_controller)
         elif choice == '6':
@@ -54,6 +56,7 @@ def main_tournament_view():
 
 
 def main_report_view():
+    """ Function to display the report management menu and handle user interactions. """
     tournament_controller = TournamentController()
     tournament_controller.create_tournament_json("tournamentDB.json")
     report_controller = ReportController(tournament_controller)

@@ -78,20 +78,19 @@ class ReportController:
         """ Display players of a tournament in alphabetical order. """
         # Select a tournament
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
-
         if selected_tournament is None:
             print("Aucun tournoi sélectionné.")
             return
-                
+
         # Get the players of the selected tournament
         tournament_players = selected_tournament.players
 
         if not tournament_players:
             print("Aucun joueur trouvé pour ce tournoi.")
             return
-        
+
         # Sort tournament players alphabetically by last name and first name
-        players_sorted = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
+        players_sorted = sorted(tournament_players, key=lambda x: (x["last_name"], x["first_name"]))
         # Create a table to display players information
         table = Table(title=f"\n Liste des joueurs par ordre alphabétique {selected_tournament.name_tournament}")
         table.add_column("Prénom", justify="left", style="cyan")
@@ -101,14 +100,17 @@ class ReportController:
             table.add_row(player["first_name"], player["last_name"], str(player["score"]))
         print(table)
 
-    """ fonction pour afficher les détails d'un tournoi"""
     def display_tournament_report(self):
+        """
+        Display the details of a selected tournament including tournament information,
+        player scores, the winner of the tournament, and details of each round's matches.
+        """
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
         if selected_tournament is None:
             print("Aucun tournoi sélectionné.")
             return
 
-        # Créer un tableau pour afficher les informations du tournoi
+        # Create an array to display tournament information
         table_tournament_info = Table(title=f"\n Informations sur le tournoi {selected_tournament.name_tournament}")
         table_tournament_info.add_column("Nom", style="cyan")
         table_tournament_info.add_column("Date de début", style="orange_red1")
@@ -122,17 +124,17 @@ class ReportController:
             )
         print(table_tournament_info)
 
-        # Créer un tableau pour afficher les informations score des joueurs
-        table_tournament_info_player = Table(title=f"\n Score des joueurs du tournoi ")
+        # Create an array to display player score information.
+        table_tournament_info_player = Table(title="\n Score des joueurs du tournoi ")
         table_tournament_info_player.add_column("Prénom", style="cyan")
         table_tournament_info_player.add_column("Nom", style="green")
         table_tournament_info_player.add_column("Score", style="dark_sea_green")
 
-        # Trier les joueurs par score
+        # Sort the players by score.
         tournament_players = selected_tournament.players
         players_sorted = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
 
-        # Parcourir chaque joueur dans la liste des joueurs du tournoi
+        # Iterate over each player in the tournament's player list.
         for player_data in players_sorted:
             table_tournament_info_player.add_row(
                 player_data["first_name"],
@@ -142,16 +144,18 @@ class ReportController:
         print(table_tournament_info_player)
 
         winner = players_sorted[0]
-        # Afficher le nom du joueur gagnant
-        print(f"\n Le gagnant du tournoi est : [cyan]{winner['first_name']} {winner['last_name']} [/cyan] avec un score de {winner['score']} \n ")
+        # Display the name of the winning player.
+        print(f"\n Le gagnant du tournoi est : "
+              f"[cyan]{winner['first_name']} {winner['last_name']} [/cyan] "
+              f"avec un score de {winner['score']} \n ")
 
-        # Afficher les détails des rounds
+        # Display the details of the rounds.
         rounds_info = selected_tournament.rounds_info
         for round_number, round_info in rounds_info.items():
             round_table = Table(title=f"\n Round {round_info['round']} - Matchs")
             round_table.add_column("Match", justify="center", style="cyan")
-            round_table.add_column("Joueur 1", style="dark_red" )
-            round_table.add_column("Joueur 2", style= "dark_goldenrod")
+            round_table.add_column("Joueur 1", style="dark_red")
+            round_table.add_column("Joueur 2", style="dark_goldenrod")
             round_table.add_column("Vainqueur", style="dark_orange3")
 
             for match_number, match in enumerate(round_info["matches"], start=1):

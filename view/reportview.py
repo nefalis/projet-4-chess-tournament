@@ -3,8 +3,8 @@ from rich import print
 
 class ReportView:
 
-    """ fonction pour creer le menu rapport """
     def display_menu_report(report_controller):
+        """ Display the report menu options. """
         print("\n[cyan]-- Menu rapport --[/cyan]\n")
         print("1. Liste des joueurs")
         print("2. Liste des tournois")

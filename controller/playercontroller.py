@@ -35,6 +35,19 @@ class PlayerController:
                 players_data = json.load(f)
                 self.players = [Player(**player_data) for player_data in players_data]
 
+    def update_player_json(self, filename):
+        """ Update player data JSON file with current player information. """
+        data_folder = "data"
+        # Create the data folder if it doesn't exist
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+        # Construct the full path to the JSON file
+        full_path = os.path.join(data_folder, filename)
+        # write player data to the JSON file
+        with open(full_path, "w", encoding="utf-8") as json_file:
+            # Serialize player objects into dictionnaries and write to the JSON file
+            json.dump([player.__dict__ for player in self.players], json_file, indent=4, ensure_ascii=False)
+
     def load_players(self, filename):
         """ Load player data from a JSON file """
         try:
@@ -62,19 +75,6 @@ class PlayerController:
         print("\n Liste des joueurs :")
         for player in self.players:
             print(f"{player.first_name} {player.last_name}")
-
-    def update_player_json(self, filename):
-        """ Update player data JSON file with current player information. """
-        data_folder = "data"
-        # Create the data folder if it doesn't exist
-        if not os.path.exists(data_folder):
-            os.makedirs(data_folder)
-        # Construct the full path to the JSON file
-        full_path = os.path.join(data_folder, filename)
-        # write player data to the JSON file
-        with open(full_path, "w", encoding="utf-8") as json_file:
-            # Serialize player objects into dictionnaries and write to the JSON file
-            json.dump([player.__dict__ for player in self.players], json_file, indent=4, ensure_ascii=False)
 
     def get_players(self):
         """ Retrieve the list of players. """

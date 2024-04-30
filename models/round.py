@@ -1,4 +1,3 @@
-from datetime import datetime
 
 
 class Round:
@@ -18,10 +17,3 @@ class Match:
         self.end_time = None
         self.winner = None
         self.round_number = round_number
-
-    def start_match(self):
-        self.start_time = datetime.now()
-
-    def end_match(self, winner):
-        self.end_time = datetime.now()
-        self.winner = winner

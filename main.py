@@ -5,6 +5,7 @@ from rich import print
 
 
 def main_menu():
+    """ Function to display the main menu and handle user navigation. """
 
     while True:
         print('\n[cyan]-- Menu navigation -- [/cyan]\n')

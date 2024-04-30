@@ -53,7 +53,7 @@ class RoundController:
     def record_match_results(self, round_number, matches):
         """ Record the results of matches for a round. """
         self.current_round_number = round_number
-        print(f"\n[green]Enregistrement des résultats du round {round_number} :[/green]")
+        print(f"\n[green] Enregistrement des résultats du round {round_number} :[/green]")
 
         for match_index, match in enumerate(matches[:4], start=1):
             for player_index, player in enumerate([match.player1, match.player2], start=1):
@@ -84,85 +84,17 @@ class RoundController:
                           "'back' pour revenir en arrière")
         print("Les résultats du round ont été enregistrés avec succès")
 
-        # Afficher les résultats du round
         self.display_round_results(round_number)
         end_time = datetime.now()
         print(f"\n[blue] Fin du round {round_number} - {end_time} [/blue]\n ")
-
-        # Mettre à jour les informations du tour et les résultats des matchs
+        # Update information of round and match
         round_info = {
             "round_number": round_number,
             "matches": self.get_match_result(matches)
         }
         self.tournament_controller.update_round_info(round_number, round_info)
-
         # Update the JSON file
         self.tournament_controller.update_tournament_json("tournamentDB.json")
-
-    # def start_first_round(self, round_number):
-    #     """
-    #     This function initiates the first round by selecting players, creating matches, displaying them,
-    #     recording match results, and updating round information.
-    #     """
-
-    #     self.current_round_number = round_number
-
-    #     # Get tournament players
-    #     tournament_players = self.tournament_controller.get_tournament_players()
-    #     # Sort players by score
-    #     sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
-    #     selected_players = random.sample(sorted_players, len(tournament_players))
-
-    #     matches = []
-    #     # Create matches for the round
-    #     matches = self.create_matches(selected_players, round_number)
-    #     # Display matches
-    #     self.display_matches(matches)
-    #     # Record match results
-    #     self.record_match_results(round_number, matches)
-    #     # Update round information
-    #     self.get_match_result(matches)
-    #     return True  # Indiquer que le round s'est terminé avec succès
-
-    # def start_next_round(self, round_number):
-    #     """
-    #     This function initiates the next round by selecting players, creating matches, displaying them,
-    #     recording match results, and updating round information.
-    #     """
-
-    #     while True:
-    #         decision = input("Voulez-vous passer au round suivant (o/n) ? ").strip().lower()
-    #         if decision == "o":
-    #             # L'utilisateur veut passer au round suivant, donc on continue
-    #             break
-    #         elif decision == "n":
-    #             # L'utilisateur veut arrêter le tournoi, donc on termine prématurément la fonction
-    #             print("Tournoi interrompu.")
-    #             self.tournament_controller.update_tournament_json("tournamentDB.json")
-    #             return False
-    #         else:
-    #             print("Veuillez répondre par 'o' pour oui ou 'n' pour non.")
-        
-    #     next_round_number = int(round_number) + 1
-                    
-    #     self.current_round_number = next_round_number
-
-    #     # Get tournament players
-    #     tournament_players = self.tournament_controller.get_tournament_players()
-    #     # Sort players by score
-    #     sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
-    #     selected_players = sorted_players
-
-    #     matches = []
-    #     # Create matches for the round
-    #     matches = self.create_matches(selected_players, round_number)
-    #     # Display matches
-    #     self.display_matches(matches)
-    #     # Record match results
-    #     self.record_match_results(round_number, matches)
-    #     # Update round information
-    #     self.get_match_result(matches)
-    #     return True
 
     def start_round(self, round_number):
         """
@@ -170,50 +102,38 @@ class RoundController:
         recording match results, and updating round information.
         """
         self.current_round_number = round_number
-        while True :
-            print(f" --While-- [yellow] round numéro :{self.current_round_number}[/yellow]")
+        while True:
+            # For the first round, select players randomly
             if self.current_round_number == 1:
-                print(f" --While--  round numéro :{self.current_round_number} | [green]Je suis dans le round 1[/green]")
                 tournament_players = self.tournament_controller.get_tournament_players()
                 sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
                 selected_players = random.sample(sorted_players, len(tournament_players))
-
-            elif self.current_round_number >= 2 and self.current_round_number <= 4 :
-                print(f" --While--  round numéro :{self.current_round_number} | [green]Je suis dans [2-4][/green]")
+            # For rounds 2 to 4
+            elif self.current_round_number >= 2 and self.current_round_number <= 4:
                 decision = input("Voulez-vous continuer oui/non (o/n) ? ").strip().lower()
-                if decision == "n" :
-                    print(f" --While--  round numéro :{self.current_round_number} | Je suis dans [2-4] --> [orange]utilisateur arrete le tournoi[/orange]")
+                if decision == "n":
                     self.tournament_controller.update_tournament_json("tournamentDB.json")
                     print("Tournoi interrompu par l'utilisateur.")
                     break
-                elif decision == "o" :
-                    print(f" --While--  round numéro :{self.current_round_number} | Je suis dans [2-4] --> [green]utilisateur continue le tournoi[/green]")
+                elif decision == "o":
                     tournament_players = self.tournament_controller.get_tournament_players()
                     sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
                     selected_players = sorted_players
-
-                else :
+                else:
                     print("Veuillez répondre par 'o' pour oui ou 'n' pour non.")
-                    print(f" --While--  round numéro :{self.current_round_number} | Je suis dans [2-4] --> [red]utilisateur a mis autre chose que o ou n[/red]")
                     continue
-
+            # If round number exceeds 4, end the tournament
             elif self.current_round_number > 4:
-                print(f" --While--  round numéro :{self.current_round_number} | Je suis > 4 --> [purple]fin du tournoi[/purple]")
                 break
 
-            print(f"Round numéro :{self.current_round_number} | Round OK --> je créé le match")
             matches = self.create_matches(selected_players, self.current_round_number)
             self.display_matches(matches)
             self.record_match_results(self.current_round_number, matches)
             self.get_match_result(matches)
-            print(f"Round numéro :{self.current_round_number} | Fin de round --> j'incrémente current_round_number")
             self.current_round_number += 1
-            print(f"Round SUIVANT numéro :{self.current_round_number} | Fin de round")
-
-        print(f"Round numéro :{self.current_round_number} | [purple]Je suis sorti de la boucle[/purple]")
 
         return self.current_round_number
-    
+
     def display_matches(self, matches):
         """ Display the players participating in each match. """
         for i, match in enumerate(matches, start=1):
@@ -232,7 +152,6 @@ class RoundController:
                 "winner": match.winner
             }
             match_results.append(match_result)
-
         return match_results
 
     def create_matches(self, players, round_number):
@@ -280,7 +199,7 @@ class RoundController:
                     # Mark player as selected
                     match_player2['selected'] = True
                     players[i]['selected'] = True
-                    # true quand paire valide - stop boucle
+                    # True when valid pair  - stop loop
                     stop = True
                 # Pair is not valid
                 else:

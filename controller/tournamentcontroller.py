@@ -23,7 +23,16 @@ class TournamentController:
     def create_tournament(self, name_tournament, town_tournament, date_start, date_finish,
                           number_player, description_tournament, rounds_info):
         """ Create a new tournament and then add to the tournament database. """
-        new_tournament = Tournament(name_tournament, town_tournament, date_start, date_finish, number_player, description_tournament, rounds_info, players=[])
+        new_tournament = Tournament(
+            name_tournament,
+            town_tournament,
+            date_start,
+            date_finish,
+            number_player,
+            description_tournament,
+            rounds_info,
+            players=[]
+        )
         # Assign the new tournament to the variable current_tournament
         self.current_tournament = new_tournament
         # Add the new tournament to the list of tournaments
@@ -61,25 +70,31 @@ class TournamentController:
             rounds_info = self.get_round_info()
             formatted_rounds = self.format_rounds_info(rounds_info)
             tournament_data["rounds_info"] = formatted_rounds
-            
+
         # write player data to the JSON file
         with open(full_path, "w", encoding="utf-8") as json_file:
             json.dump(tournaments_data, json_file, indent=4, ensure_ascii=False, default=str)
 
     def format_rounds_info(self, rounds_info):
         """
-        Formate les informations sur les rounds pour les inclure dans le fichier JSON.
+        Format round information to include in the JSON file.
         """
         formatted_rounds = {}
         for round_number, round_data in rounds_info.items():
             formatted_round = {}
             formatted_round["round"] = round_number
-            # Ajouter les informations sur les matchs
+            # Add match information
             formatted_matches = []
             for match_info in round_data["matches"]:
                 formatted_match = {}
-                formatted_match["player1"] = f"{match_info['player1']['first_name']} {match_info['player1']['last_name']}"
-                formatted_match["player2"] = f"{match_info['player2']['first_name']} {match_info['player2']['last_name']}"
+                formatted_match["player1"] = (
+                    f"{match_info['player1']['first_name']} "
+                    f"{match_info['player1']['last_name']}"
+                )
+                formatted_match["player2"] = (
+                    f"{match_info['player2']['first_name']} "
+                    f"{match_info['player2']['last_name']}"
+                )
                 formatted_match["winner"] = f"{match_info['winner']['first_name']} {match_info['winner']['last_name']}"
                 formatted_matches.append(formatted_match)
             formatted_round["matches"] = formatted_matches
@@ -168,10 +183,6 @@ class TournamentController:
         tournament_players = self.current_tournament.players
         return tournament_players
 
-    def get_tournaments(tournament_controller):
-        """ Get the list of tournaments. """
-        return tournament_controller.tournaments
-
     def update_round_info(self, round_number, round_info):
         """ This function updates the information of a specific round. """
         self.round_info[round_number] = round_info
@@ -188,7 +199,6 @@ class TournamentController:
 
     def end_tournament(self):
         """ This function concludes the tournament by displaying the player rankings and determining the winner. """
-        print(" je suis dans end_tournament")
         winner_name = None
         winner_score = None
 
@@ -214,7 +224,7 @@ class TournamentController:
         self.current_tournament.rounds_info = self.get_round_info()
 
     def get_tournament_by_name(self, name_tournament, date_start):
-        """ Retrieve a specific tournament by its name and start date. """
+        """ Retrieve a specific tournament - name and start date. """
         for tournament in self.tournaments:
             if tournament.name_tournament == name_tournament and tournament.date_start == date_start:
                 return tournament
@@ -235,7 +245,7 @@ class TournamentController:
         """
         filename = "tournamentDB.json"
 
-        # Charger les données du tournoi depuis le fichier JSON
+        # Load tournament data from the JSON file.
         try:
             self.load_tournament(filename)
         except FileNotFoundError:
@@ -245,37 +255,33 @@ class TournamentController:
             print(f"Erreur lors du décodage du fichier JSON {filename}.")
             return
 
-        # Afficher les tournois disponibles pour la reprise
+        # Display available tournaments for resume.
         self.display_tournament()
-
-        # Demander à l'utilisateur de choisir un tournoi à reprendre
+        # Ask the user to choose a tournament to resume.
         selected_tournament_name = input("Entrez le nom du tournoi que vous souhaitez reprendre : ")
-        selected_tournament_date = input("Entrez la date de début du tournoi que vous souhaitez reprendre (format JJ/MM/AAAA) : ")
-
-        # Récupérer le tournoi sélectionné
+        selected_tournament_date = input(
+            "Entrez la date de début du tournoi que vous souhaitez reprendre (format JJ/MM/AAAA) : "
+        )
+        # Retrieve the selected tournament.
         selected_tournament = self.get_tournament_by_name(selected_tournament_name, selected_tournament_date)
-
-        # Vérifier si le tournoi sélectionné existe
+        # Check if the selected tournament exists.
         if selected_tournament is None:
             print("Le tournoi spécifié n'existe pas.")
             return
 
-        # Définir le tournoi actuel sur le tournoi sélectionné
         self.current_tournament = selected_tournament
-
-        # Vérifier si tous les rounds sont terminés
+        # Check if all rounds are completed.
         total_rounds = 4
         last_round_number = max(self.current_tournament.rounds_info.keys(), default=0)
         if last_round_number == total_rounds:
             print("Le tournoi est déjà terminé.")
             return
 
-        # Démarrer le tournoi à partir du prochain round après le dernier round enregistré
+        # Start the tournament from the next round after the last recorded round.
         next_round_number = int(last_round_number) + 1
         print(f"Reprise du tournoi au round {next_round_number}.")
         self.match_controller.start_round(next_round_number)
-                # Finish the tournament once all rounds are completed
+        # Finish the tournament.
         self.end_tournament()
-        # Update the tournament JSON file
+        # Update the tournament JSON file.
         self.update_tournament_json("tournamentDB.json")
-

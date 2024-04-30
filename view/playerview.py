@@ -3,16 +3,17 @@ from rich import print
 
 
 class PlayerView:
-    """ fonction pour creer le menu joueur"""
+
     def display_menu_player(player_controller):
+        """ Function to display the player menu and handle user interactions. """
         print("\n [cyan]-- Menu Joueur -- [/cyan]\n")
         print("1. Créer un joueur")
         print("2. Afficher tous les joueurs")
         print("3. Supprimer un joueur")
         print("4. Quitter le menu joueur")
 
-    """ fonction pour les input de creation de joueur"""
     def create_player_input(player_controller):
+        """ Function to handle input for creating a new player and add it to the player controller. """
         national_chess_id = input("Entrez l'identifiant national d’échecs : ")
         first_name = input("Entrez le prénom du joueur : ")
         last_name = input("Entrez le nom du joueur : ")
@@ -21,8 +22,8 @@ class PlayerView:
         player_controller.create_player(national_chess_id, first_name, last_name, birthday, score)
         print("Le joueur a été créé avec succès")
 
-    """ fonction pour supprimer un joueur"""
     def delete_players(player_controller):
+        """ Function for remove a player """
         print("Liste des joueurs :")
         for player in player_controller.players:
             print(f"{player.first_name} {player.last_name}")
