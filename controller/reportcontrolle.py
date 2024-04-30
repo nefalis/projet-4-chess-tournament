@@ -93,7 +93,7 @@ class ReportController:
         # Sort tournament players alphabetically by last name and first name
         players_sorted = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
         # Create a table to display players information
-        table = Table(title=f"Liste des joueurs par ordre alphabétique {selected_tournament.name_tournament}")
+        table = Table(title=f"\n Liste des joueurs par ordre alphabétique {selected_tournament.name_tournament}")
         table.add_column("Prénom", justify="left", style="cyan")
         table.add_column("Nom", justify="left", style="magenta")
         table.add_column("Score", justify="left", style="green")
@@ -146,7 +146,7 @@ class ReportController:
         print(f"\n Le gagnant du tournoi est : [cyan]{winner['first_name']} {winner['last_name']} [/cyan] avec un score de {winner['score']} \n ")
 
         # Afficher les détails des rounds
-        rounds_info = selected_tournament.rounds_infos
+        rounds_info = selected_tournament.rounds_info
         for round_number, round_info in rounds_info.items():
             round_table = Table(title=f"\n Round {round_info['round']} - Matchs")
             round_table.add_column("Match", justify="center", style="cyan")

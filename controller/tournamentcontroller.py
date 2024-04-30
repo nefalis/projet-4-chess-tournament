@@ -137,33 +137,9 @@ class TournamentController:
         # Get players for the tournament
         self.current_tournament.players = self.get_tournament_players()
         round_number = 1
-        
-        #         # Start the first round
-        # if round_number == 1:
-        #         if not self.match_controller.start_first_round(round_number):
-        #         # Tournament interrupted
-        #             return
-        #         round_number += 1
-        # else:
-        #     # Start subsequent rounds
-        #     while round_number <= 4:
-        #         # Start a new round
-        #         if not self.match_controller.start_next_round(round_number):
-        #             # Tournament interrupted
-        #             break
-        #         # Increment the round count
-        #         self.round_count += 1
-        #         # Move to the next round
-        #         round_number += 1
-        # Start rounds
-        while round_number <= 4:
-            # Start a new round
-            self.match_controller.start_round(round_number)
-            # Increment the round count
-            self.round_count += 1
-            # Move to the next round
-            round_number += 1
 
+        # Start a new round
+        self.round_count = self.match_controller.start_round(round_number)
         # Finish the tournament once all rounds are completed
         self.end_tournament()
         # Update the tournament JSON file
@@ -212,6 +188,7 @@ class TournamentController:
 
     def end_tournament(self):
         """ This function concludes the tournament by displaying the player rankings and determining the winner. """
+        print(" je suis dans end_tournament")
         winner_name = None
         winner_score = None
 
@@ -297,3 +274,8 @@ class TournamentController:
         next_round_number = int(last_round_number) + 1
         print(f"Reprise du tournoi au round {next_round_number}.")
         self.match_controller.start_round(next_round_number)
+                # Finish the tournament once all rounds are completed
+        self.end_tournament()
+        # Update the tournament JSON file
+        self.update_tournament_json("tournamentDB.json")
+

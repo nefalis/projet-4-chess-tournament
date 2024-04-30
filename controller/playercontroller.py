@@ -59,7 +59,7 @@ class PlayerController:
 
     def display_players(self):
         """ Display the list of players. """
-        print("Liste des joueurs :")
+        print("\n Liste des joueurs :")
         for player in self.players:
             print(f"{player.first_name} {player.last_name}")
 
