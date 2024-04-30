@@ -77,6 +77,20 @@ python main.py
 ``` 
 pip intall flake8-html
  ```
+### Création du fichier .flake8
+IL faut crée un fichier afin d'enregistré les fichiers a ne pas prendre ne compte dans l'analyse ainsi que la longueur des lignes
+nom du fichier :
+ ``` .flake8 ```
+
+
+Texte a copié dedans
+``` 
+[flake8]
+max-line-length = 119
+exclude = .venv
+ ```
+
+Vous pouvez maintenant généré le dossier avec le rapport avec la commande ci dessous
 
  ### Génération du dossier contenant le rapport
 Le rapport sera généré dans le dossier Flake8
