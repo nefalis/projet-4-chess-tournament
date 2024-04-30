@@ -43,8 +43,10 @@ def main_tournament_view():
         elif choice == '3':
             tournament_controller.start_tournament()
         elif choice == '4':
-            TournamentView.delete_tournament(tournament_controller)
+            tournament_controller.resume_tournament()   
         elif choice == '5':
+            TournamentView.delete_tournament(tournament_controller)
+        elif choice == '6':
             print("Retour au menu principal\n")
             break
         else:

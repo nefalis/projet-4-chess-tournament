@@ -12,16 +12,16 @@ class TournamentView:
         print("1. Ajouter un tournoi")
         print("2. Voir la liste des tournois")
         print("3. Commencer un tournoi")
-        print("4. Supprimer un tournoi")
-        print("5. Quitter le menu tournoi")
+        print("4. Reprendre un tournoi")
+        print("5. Supprimer un tournoi")
+        print("6. Quitter le menu tournoi")
 
     """ fonction pour les input de creation de tournoi """
     def create_tournament_input(tournament_controller, player_controller):
         name_tournament = input("Entrez le nom du tournoi : ")
         town_tournament = input("Entrez le nom de la ville : ")
-        date_start = input("Entrez la date de début du tournoi : ")
-        date_finish = input("Entrez la date de fin du tournoi : ")
-        number_round = input("Entrez le nombre de round  : ")
+        date_start = input("Entrez la date de début du tournoi (JJ/MM/AAAA) : ")
+        date_finish = input("Entrez la date de fin du tournoi (JJ/MM/AAAA) : ")
         number_player = input("Entrez le nombre de joueur qui participe : ")
         description_tournament = input("Entrez une description du tournoi du tournoi : ")
 
@@ -31,7 +31,6 @@ class TournamentView:
                                                 town_tournament,
                                                 date_start,
                                                 date_finish,
-                                                number_round,
                                                 number_player,
                                                 description_tournament,
                                                 rounds_info)
@@ -40,7 +39,7 @@ class TournamentView:
         print("Liste des joueurs disponibles :")
         players = player_controller.get_players()
         for index, player in enumerate(players, start=1):
-            print(f"{index} prenom : {player.first_name} nom : {player.last_name} score : {player.score}")
+            print(f"{index} prenom : {player.first_name} - nom : {player.last_name} score : {player.score}")
 
         # ajout des joueurs pour le tournoi
         num_players = int(number_player)
