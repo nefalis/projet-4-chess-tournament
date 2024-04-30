@@ -78,7 +78,7 @@ python main.py
 pip intall flake8-html
  ```
 ### Création du fichier .flake8
-IL faut crée un fichier afin d'enregistré les fichiers a ne pas prendre ne compte dans l'analyse ainsi que la longueur des lignes
+IL faut crée un fichier à la racine du dossier afin d'enregistré les fichiers a ne pas prendre ne compte dans l'analyse ainsi que la longueur des lignes
 nom du fichier :
  ``` .flake8 ```
 
