@@ -139,6 +139,8 @@ class TournamentView:
                 print("\nLes résultats du round ont été enregistrés avec succès\n")
             case 6:
                 print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+            case _:
+                print("Bad option")
 
     def print_controller_tournament(option):
         match option:
@@ -170,6 +172,8 @@ class TournamentView:
                 return input("Entrez le nom du tournoi que vous souhaitez reprendre : ")
             case 13:
                 return input("Entrez la date de début du tournoi que vous souhaitez reprendre (format JJ/MM/AAAA) : ")
+            case _:
+                print("Bad option")
 
     def print_controller_tournament_param(param, option):
         match option:
@@ -206,3 +210,5 @@ class TournamentView:
                       f"{param[1].player1['first_name']} {param[1].player1['last_name']} "
                       f"vs "
                       f"{param[1].player2['first_name']} {param[1].player2['last_name']}")
+            case _:
+                print("Bad option")

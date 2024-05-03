@@ -55,3 +55,5 @@ class PlayerView:
                 print("\n Erreur lors du décodage du fichier JSON \n")
             case 4:
                 print("\n Liste des joueurs : \n")
+            case _:
+                print("Bad option")
