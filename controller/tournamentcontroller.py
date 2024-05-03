@@ -6,7 +6,6 @@ from controller.roundcontroller import RoundController
 from controller.playercontroller import PlayerController
 from view.tournamentview import TournamentView
 from models.tournament import Tournament
-from rich import print
 
 
 class TournamentController:
@@ -121,14 +120,14 @@ class TournamentController:
                     for tournament_data in tournaments_data
                 ]
         except FileNotFoundError:
-            print(f"Le fichier {filename} n'a pas été trouvé")
+            TournamentView.print_controller_tournament(0)
         except json.JSONDecodeError:
-            print(f"Erreur lors du décodage du fichier JSON {filename}")
+            TournamentView.print_controller_tournament(1)
 
     def add_player_tournament(self, selected_players):
         """ Add players to the current tournament. """
         if self.current_tournament is None:
-            print("Aucun tournoi en cours")
+            TournamentView.print_controller_tournament(2)
             return
         # Add each selected player to the current tournament
         for player in (selected_players):
@@ -141,12 +140,12 @@ class TournamentController:
         """
         # Select a tournament to start
         tournament = TournamentView.select_tournament(self)
-        print(f"\n[blue] Vous allez commencer le tournoi {tournament.name_tournament}[/blue]\n")
+        TournamentView.print_controller_tournament_param(tournament, 5)
         # Check if a tournament is selected
         if tournament is None:
-            print("Aucun tournoi sélectionné")
+            TournamentView.print_controller_tournament(3)
             return
-        print(f"Heure du début: {datetime.now()}")
+        TournamentView.print_controller_tournament_param(datetime.now(), 0)
         # Set the current tournament
         self.current_tournament = tournament
         # Get players for the tournament
@@ -175,7 +174,7 @@ class TournamentController:
                 else:
                     player_scores[player_name] = player_score
             else:
-                print("Erreur: player_data n'est pas un dictionnaire.")
+                TournamentView.print_controller_tournament(4)
         return player_scores
 
     def get_tournament_players(self):
@@ -191,11 +190,15 @@ class TournamentController:
         """ This function retrieves the information of all rounds. """
         return self.round_info
 
+    def get_tournaments(tournament_controller):
+        """ Get the list of tournaments. """
+        return tournament_controller.tournaments
+
     def display_tournament(tournament_controller):
         """ Display the list of tournaments. """
-        print("Liste des tournois : ")
+        TournamentView.print_controller_tournament(5)
         for tournament in tournament_controller.tournaments:
-            print(f"{tournament.name_tournament} {tournament.date_start}")
+            TournamentView.print_controller_tournament_param([tournament], 1)
 
     def end_tournament(self):
         """ This function concludes the tournament by displaying the player rankings and determining the winner. """
@@ -208,19 +211,18 @@ class TournamentController:
                 # Sort players by score (highest first)
                 sorted_players = sorted(player_scores.items(), key=lambda x: x[1], reverse=True)
                 # Display player rankings
-                print("\n[green]Classement des joueurs:[/green]")
+                TournamentView.print_controller_tournament(6)
                 for rank, (player_name, score) in enumerate(sorted_players, start=1):
-                    print(f"{rank}. {player_name} - Score: {score} points")
+                    TournamentView.print_controller_tournament_param([rank, player_name, score], 2)
                 # Determine the winner
                 winner_name, winner_score = sorted_players[0] if sorted_players else (None, None)
                 if winner_name:
                     # Display the winner
-                    print(f"\n[yellow]Le vainqueur du tournoi est : {winner_name} avec un score de "
-                          f"{winner_score} points[/yellow]")
+                    TournamentView.print_controller_tournament_param([winner_name, winner_score], 3)
             else:
-                print("Aucun joueur n'a participé au tournoi ou n'a marqué de points.")
+                TournamentView.print_controller_tournament(7)
         else:
-            print("Le tournoi ne peut pas être terminé car tous les rounds n'ont pas été joués")
+            TournamentView.print_controller_tournament(8)
         self.current_tournament.rounds_info = self.get_round_info()
 
     def get_tournament_by_name(self, name_tournament, date_start):
@@ -235,9 +237,8 @@ class TournamentController:
         """ Remove a tournament from the list of tournaments. """
         if tournament in self.tournaments:
             self.tournaments.remove(tournament)
-            print(f"Le tournoi {tournament.name_tournament} a été supprimé")
         else:
-            print("Le tournoi spécifié n'existe pas dans la liste des tournois")
+            TournamentView.print_controller_tournament(10)
 
     def resume_tournament(self):
         """
@@ -249,24 +250,22 @@ class TournamentController:
         try:
             self.load_tournament(filename)
         except FileNotFoundError:
-            print(f"Le fichier {filename} n'a pas été trouvé.")
+            TournamentView.print_controller_tournament(0)
             return
         except json.JSONDecodeError:
-            print(f"Erreur lors du décodage du fichier JSON {filename}.")
+            TournamentView.print_controller_tournament(1)
             return
 
         # Display available tournaments for resume.
         self.display_tournament()
         # Ask the user to choose a tournament to resume.
-        selected_tournament_name = input("Entrez le nom du tournoi que vous souhaitez reprendre : ")
-        selected_tournament_date = input(
-            "Entrez la date de début du tournoi que vous souhaitez reprendre (format JJ/MM/AAAA) : "
-        )
+        selected_tournament_name = TournamentView.print_controller_tournament(12)
+        selected_tournament_date = TournamentView.print_controller_tournament(13)
         # Retrieve the selected tournament.
         selected_tournament = self.get_tournament_by_name(selected_tournament_name, selected_tournament_date)
         # Check if the selected tournament exists.
         if selected_tournament is None:
-            print("Le tournoi spécifié n'existe pas.")
+            TournamentView.print_controller_tournament(10)
             return
 
         self.current_tournament = selected_tournament
@@ -274,12 +273,12 @@ class TournamentController:
         total_rounds = 4
         last_round_number = max(self.current_tournament.rounds_info.keys(), default=0)
         if last_round_number == total_rounds:
-            print("Le tournoi est déjà terminé.")
+            TournamentView.print_controller_tournament(11)
             return
 
         # Start the tournament from the next round after the last recorded round.
         next_round_number = int(last_round_number) + 1
-        print(f"Reprise du tournoi au round {next_round_number}.")
+        TournamentView.print_controller_tournament_param(next_round_number, 4)
         self.match_controller.start_round(next_round_number)
         # Finish the tournament.
         self.end_tournament()

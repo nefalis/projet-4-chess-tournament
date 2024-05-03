@@ -121,3 +121,88 @@ class TournamentView:
             print(f"{name_tournament} {date_start} a été supprimé")
         else:
             print("Le tournoi spécifié n'existe pas")
+
+    def print_controller_round(option):
+        match option:
+            case 0:
+                print("\nTournoi interrompu par l'utilisateur.\n")
+            case 1:
+                print("\nVeuillez répondre par 'o' pour oui ou 'n' pour non.\n")
+            case 2:
+                return input("Voulez-vous continuer oui/non (o/n) ? ").strip().lower()
+            case 3:
+                print("\nNuméro du joueur invalide. Veuillez réessayer \n")
+            case 4:
+                print("\nVeuillez saisir un numero de joueur ou 'egalite' pour un match nul, "
+                      "'back' pour revenir en arrière\n")
+            case 5:
+                print("\nLes résultats du round ont été enregistrés avec succès\n")
+            case 6:
+                print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+
+    def print_controller_tournament(option):
+        match option:
+            case 0:
+                print("\nLe fichier n'a pas été trouvé\n")
+            case 1:
+                print("\nErreur lors du décodage du fichier JSON \n")
+            case 2:
+                print("\nAucun tournoi en cours \n")
+            case 3:
+                print("\nAucun tournoi sélectionné\n")
+            case 4:
+                print("\nErreur: player_data n'est pas un dictionnaire.\n")
+            case 5:
+                print("\nListe des tournois : \n")
+            case 6:
+                print("\n[green]Classement des joueurs:[/green]\n")
+            case 7:
+                print("\nAucun joueur n'a participé au tournoi ou n'a marqué de points.\n")
+            case 8:
+                print("\nLe tournoi ne peut pas être terminé car tous les rounds n'ont pas été joués\n")
+            case 9:
+                print("\nLe tournoi a été supprimé\n")
+            case 10:
+                print("\nLe tournoi spécifié n'existe pas dans la liste des tournois\n")
+            case 11:
+                print("\nLe tournoi est déjà terminé.\n")
+            case 12:
+                return input("Entrez le nom du tournoi que vous souhaitez reprendre : ")
+            case 13:
+                return input("Entrez la date de début du tournoi que vous souhaitez reprendre (format JJ/MM/AAAA) : ")
+
+    def print_controller_tournament_param(param, option):
+        match option:
+            case 0:
+                print(f"\nHeure du début: {param}\n")
+            case 1:
+                print(f"{param[0].name_tournament} {param[0].date_start}")
+            case 2:
+                print(f"{param[0]}. {param[1]} - Score: {param[2]} points")
+            case 3:
+                print(f"\n[yellow]Le vainqueur du tournoi est : {param[0]} avec un score de "
+                      f"{param[1]} points[/yellow]")
+            case 4:
+                print(f"Reprise du tournoi au round {param}.")
+            case 5:
+                print(f"\n[blue] Vous allez commencer le tournoi {param.name_tournament}[/blue]\n")
+            case 6:
+                print(f"\n[green]Résultats du Round {param}: [/green]\n")
+            case 7:
+                print(f"\n[green] Enregistrement des résultats du round {param} :[/green]")
+            case 8:
+                return input(f"Match {param}, Entrez numéro du vainqueur 1 ou 2, 'egalite' pour match nul, "
+                             f"ou 'back' revenir en arrière) : ")
+            case 9:
+                print(f"\n[blue] Fin du round {param[0]} - {param[1]} [/blue]\n ")
+            case 10:
+                print(f"{param[0].player1['first_name']} {param[0].player1['last_name']} "
+                      f"vs {param[0].player2['first_name']} {param[0].player2['last_name']}: "
+                      f"{param[1]}")
+            case 11:
+                print(f"{param[0]}. {param[1]["first_name"]} {param[1]["last_name"]}")
+            case 12:
+                print(f"Match {param[0]}: "
+                      f"{param[1].player1['first_name']} {param[1].player1['last_name']} "
+                      f"vs "
+                      f"{param[1].player2['first_name']} {param[1].player2['last_name']}")

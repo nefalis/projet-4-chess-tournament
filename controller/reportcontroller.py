@@ -1,7 +1,7 @@
 from controller.tournamentcontroller import TournamentController
 from view.tournamentview import TournamentView
+from view.reportview import ReportView
 from controller.roundcontroller import RoundController
-from rich import print
 from rich.table import Table
 
 
@@ -27,7 +27,7 @@ class ReportController:
         table.add_column("National chess id", justify="left", style="blue")
         for player in players_sorted:
             table.add_row(player.first_name, player.last_name, str(player.birthday), str(player.national_chess_id))
-        print(table)
+        ReportView.print_controller_report_param(table, 0)
 
     def display_all_tournament(self):
         """ Display the list of all tournaments """
@@ -49,16 +49,16 @@ class ReportController:
                     str(tournament.date_finish),
                     tournament.town_tournament
                 )
-            print(table)
+            ReportView.print_controller_report_param(table, 0)
         else:
-            print("Aucun tournoi n'est disponible pour affichage.")
+            ReportView.print_controller_report(0)
 
     def display_tournament_date_report(self):
         """ Display the dates of a tournament. """
         # Select a tournament
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
         if selected_tournament is None:
-            print("Aucun tournoi sélectionné.")
+            ReportView.print_controller_report(1)
             return
         # Create a table to display tournament information
         table_tournament_info = Table(title=f"\n Informations sur le tournoi {selected_tournament.name_tournament}")
@@ -72,21 +72,20 @@ class ReportController:
             str(selected_tournament.date_finish),
             selected_tournament.town_tournament
         )
-        print(table_tournament_info)
+        ReportView.print_controller_report_param(table_tournament_info, 0)
 
     def display_tournament_player_report(self):
         """ Display players of a tournament in alphabetical order. """
         # Select a tournament
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
         if selected_tournament is None:
-            print("Aucun tournoi sélectionné.")
+            ReportView.print_controller_report(1)
             return
 
         # Get the players of the selected tournament
         tournament_players = selected_tournament.players
-
         if not tournament_players:
-            print("Aucun joueur trouvé pour ce tournoi.")
+            ReportView.print_controller_report(2)
             return
 
         # Sort tournament players alphabetically by last name and first name
@@ -98,7 +97,7 @@ class ReportController:
         table.add_column("Score", justify="left", style="green")
         for player in players_sorted:
             table.add_row(player["first_name"], player["last_name"], str(player["score"]))
-        print(table)
+        ReportView.print_controller_report_param(table, 0)
 
     def display_tournament_report(self):
         """
@@ -107,7 +106,7 @@ class ReportController:
         """
         selected_tournament = TournamentView.select_tournament(self.tournament_controller)
         if selected_tournament is None:
-            print("Aucun tournoi sélectionné.")
+            ReportView.print_controller_report(1)
             return
 
         # Create an array to display tournament information
@@ -122,7 +121,7 @@ class ReportController:
             str(selected_tournament.date_finish),
             str(selected_tournament.town_tournament)
             )
-        print(table_tournament_info)
+        ReportView.print_controller_report_param(table_tournament_info, 0)
 
         # Create an array to display player score information.
         table_tournament_info_player = Table(title="\n Score des joueurs du tournoi ")
@@ -141,13 +140,11 @@ class ReportController:
                 player_data["last_name"],
                 str(player_data["score"])
             )
-        print(table_tournament_info_player)
+        ReportView.print_controller_report_param(table_tournament_info_player, 0)
 
         winner = players_sorted[0]
         # Display the name of the winning player.
-        print(f"\n Le gagnant du tournoi est : "
-              f"[cyan]{winner['first_name']} {winner['last_name']} [/cyan] "
-              f"avec un score de {winner['score']} \n ")
+        ReportView.print_controller_report_param(winner, 1)
 
         # Display the details of the rounds.
         rounds_info = selected_tournament.rounds_info
@@ -165,5 +162,4 @@ class ReportController:
                     match["player2"],
                     match["winner"]
                 )
-
-            print(round_table)
+            ReportView.print_controller_report_param(round_table, 0)

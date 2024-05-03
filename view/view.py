@@ -1,6 +1,6 @@
 from controller.playercontroller import PlayerController
 from controller.tournamentcontroller import TournamentController
-from controller.reportcontrolle import ReportController
+from controller.reportcontroller import ReportController
 from view.playerview import PlayerView
 from view.tournamentview import TournamentView
 from view.reportview import ReportView
@@ -18,7 +18,7 @@ def main_player_view():
         if choice == '1':
             PlayerView.create_player_input(player_controller)
         elif choice == '2':
-            PlayerController.display_players(player_controller)
+            PlayerView.display_players(player_controller)
         elif choice == '3':
             PlayerView.delete_players(player_controller)
         elif choice == '4':

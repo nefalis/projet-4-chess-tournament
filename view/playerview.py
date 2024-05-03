@@ -36,3 +36,22 @@ class PlayerView:
             print(f"{first_name} {last_name} a été supprimé")
         else:
             print("Le joueur spécifié n'existe pas")
+
+    def display_players(self):
+        """ Display the list of players. """
+        print("\n[cyan] Liste des joueurs :[/cyan]\n")
+        for player in self.players:
+            print(f"{player.first_name} {player.last_name}")
+
+    def print_controller_player(option):
+        match option:
+            case 0:
+                print("\n Le joueur a été supprimé. \n")
+            case 1:
+                print("\n Le joueur spécifié n'existe pas dans la liste des joueurs. \n")
+            case 2:
+                print("\n Le fichier n'a pas été trouvé \n")
+            case 3:
+                print("\n Erreur lors du décodage du fichier JSON \n")
+            case 4:
+                print("\n Liste des joueurs : \n")

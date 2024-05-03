@@ -1,6 +1,7 @@
 import json
 import os
 from models.player import Player
+from view.playerview import PlayerView
 
 
 class PlayerController:
@@ -16,7 +17,6 @@ class PlayerController:
         player = Player(national_chess_id, first_name, last_name, birthday, score)
         self.players.append(player)
         self.update_player_json("playersDB.json")
-        print("Le joueur a été crée")
         return player
 
     def create_player_json(self, filename):
@@ -66,15 +66,9 @@ class PlayerController:
                     for player_data in players_data
                 ]
         except FileNotFoundError:
-            print(f"Le fichier {filename} n'a pas été trouvé")
+            PlayerView.print_controller_player(2)
         except json.JSONDecodeError:
-            print(f"Erreur lors du décodage du fichier JSON {filename}")
-
-    def display_players(self):
-        """ Display the list of players. """
-        print("\n Liste des joueurs :")
-        for player in self.players:
-            print(f"{player.first_name} {player.last_name}")
+            PlayerView.print_controller_player(3)
 
     def get_players(self):
         """ Retrieve the list of players. """
@@ -92,6 +86,5 @@ class PlayerController:
         if player in self.players:
             self.players.remove(player)
             self.update_player_json("playersDB.json")
-            print(f"Le joueur {player.first_name} {player.last_name} a été supprimé.")
         else:
-            print("Le joueur spécifié n'existe pas dans la liste des joueurs")
+            PlayerView.print_controller_player(1)

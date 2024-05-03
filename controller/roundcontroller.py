@@ -1,8 +1,8 @@
+import random
 from models.round import Match
 from controller.playercontroller import PlayerController
+from view.tournamentview import TournamentView
 from datetime import datetime
-from rich import print
-import random
 
 
 class RoundController:
@@ -26,41 +26,25 @@ class RoundController:
 
     def display_round_results(self, round_number):
         """ This function prints the results of matches for a specific round. """
-        print(f"\n[green]Résultats du Round {round_number}: [/]\n")
+        TournamentView.print_controller_tournament_param(round_number, 6)
         round_matches = [match for match in self.matches if match.round_number == round_number]
         for match in round_matches:
             if match.winner is not None:
                 winner_name = f"{match.winner['first_name']} {match.winner["last_name"]}"
             else:
                 winner_name = "Égalité"
-            print(f"{match.player1['first_name']} {match.player1['last_name']} "
-                  f"vs {match.player2['first_name']} {match.player2['last_name']}: "
-                  f"{winner_name}")
-
-    def end_match(self, match, winner):
-        """ This function concludes a match by specifying the winner and updating player scores accordingly. """
-        match.winner = winner
-        if winner:
-            winner["score"] += 1
-            # Determine the loser
-            match.player1 if winner != match.player1 else match.player2
-        else:
-            # If the match is a draw, add 0.5 to each player
-            for player in [match.player1, match.player2]:
-                if player != match.winner:
-                    player["score"] += 0.5
+            TournamentView.print_controller_tournament_param([match, winner_name], 10)
 
     def record_match_results(self, round_number, matches):
         """ Record the results of matches for a round. """
         self.current_round_number = round_number
-        print(f"\n[green] Enregistrement des résultats du round {round_number} :[/green]")
+        TournamentView.print_controller_tournament_param(round_number, 7)
 
         for match_index, match in enumerate(matches[:4], start=1):
             for player_index, player in enumerate([match.player1, match.player2], start=1):
-                print(f"{player_index}. {player["first_name"]} {player["last_name"]}")
+                TournamentView.print_controller_tournament_param([player_index, player], 11)
             while True:
-                winner = input(f"Match {match_index}, Entrez numéro du vainqueur 1 ou 2, 'egalite' pour match nul, "
-                               f"ou 'back' revenir en arrière) : ")
+                winner = TournamentView.print_controller_tournament_param(match_index, 8)
                 if winner.lower() == 'egalite':
                     match.winner = None
                     self.end_match(match, None)
@@ -78,15 +62,14 @@ class RoundController:
                         self.end_match(match, match.player2)
                         break
                     else:
-                        print("Numéro du joueur invalide. Veuillez réessayer")
+                        TournamentView.print_controller_tournament(3)
                 else:
-                    print("Veuillez saisir un numero de joueur ou 'egalite' pour un match nul, "
-                          "'back' pour revenir en arrière")
-        print("Les résultats du round ont été enregistrés avec succès")
+                    TournamentView.print_controller_tournament(4)
+        TournamentView.print_controller_tournament(5)
 
         self.display_round_results(round_number)
         end_time = datetime.now()
-        print(f"\n[blue] Fin du round {round_number} - {end_time} [/blue]\n ")
+        TournamentView.print_controller_tournament_param([round_number, end_time], 9)
         # Update information of round and match
         round_info = {
             "round_number": round_number,
@@ -95,6 +78,19 @@ class RoundController:
         self.tournament_controller.update_round_info(round_number, round_info)
         # Update the JSON file
         self.tournament_controller.update_tournament_json("tournamentDB.json")
+
+    def end_match(self, match, winner):
+        """ This function concludes a match by specifying the winner and updating player scores accordingly. """
+        match.winner = winner
+        if winner:
+            winner["score"] += 1
+            # Determine the loser
+            match.player1 if winner != match.player1 else match.player2
+        else:
+            # If the match is a draw, add 0.5 to each player
+            for player in [match.player1, match.player2]:
+                if player != match.winner:
+                    player["score"] += 0.5
 
     def start_round(self, round_number):
         """
@@ -110,17 +106,17 @@ class RoundController:
                 selected_players = random.sample(sorted_players, len(tournament_players))
             # For rounds 2 to 4
             elif self.current_round_number >= 2 and self.current_round_number <= 4:
-                decision = input("Voulez-vous continuer oui/non (o/n) ? ").strip().lower()
+                decision = TournamentView.print_controller_round(2)
                 if decision == "n":
                     self.tournament_controller.update_tournament_json("tournamentDB.json")
-                    print("Tournoi interrompu par l'utilisateur.")
+                    TournamentView.print_controller_round(0)
                     break
                 elif decision == "o":
                     tournament_players = self.tournament_controller.get_tournament_players()
                     sorted_players = sorted(tournament_players, key=lambda x: x["score"], reverse=True)
                     selected_players = sorted_players
                 else:
-                    print("Veuillez répondre par 'o' pour oui ou 'n' pour non.")
+                    TournamentView.print_controller_round(1)
                     continue
             # If round number exceeds 4, end the tournament
             elif self.current_round_number > 4:
@@ -137,10 +133,7 @@ class RoundController:
     def display_matches(self, matches):
         """ Display the players participating in each match. """
         for i, match in enumerate(matches, start=1):
-            print(f"Match {i}: "
-                  f"{match.player1['first_name']} {match.player1['last_name']} "
-                  f"vs "
-                  f"{match.player2['first_name']} {match.player2['last_name']}")
+            TournamentView.print_controller_tournament_param([i, match], 12)
 
     def get_match_result(self, matches):
         """ This function collects the results of matches and returns them in a list of dictionaries. """
@@ -166,7 +159,7 @@ class RoundController:
         """
         # Check if the number of players is even
         if len(self.tournament_controller.current_tournament.players) % 2 != 0:
-            print("Le nombre de joueurs doit être pair pour former des paires pour les matchs")
+            TournamentView.print_controller_round(6)
             return []
 
         matches = []
