@@ -18,8 +18,9 @@ Application permettant la gestion de tournoi d'échecs avec plusieurs fonctionna
 - 2.1 Ajouter un tournoi
 - 2.2 Voir la liste des tournois
 - 2.3 Commencer un tournoi
-- 2.4 Supprimer un tournoi
-- 2.5 Quitter le menu tournoi
+- 2.4 Reprendre un tournoi
+- 2.5 Supprimer un tournoi
+- 2.6 Quitter le menu tournoi
 3. Menu rapport
 - 3.1 Liste des joueurs
 - 3.2 Liste des tournois
